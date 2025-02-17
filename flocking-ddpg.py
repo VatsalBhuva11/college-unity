@@ -86,9 +86,16 @@ class FlockingDDPG:
         batch = self.replay_buffer.sample(BATCH_SIZE)
         states, actions, rewards, next_states = zip(*batch)
         
+        # Convert lists of numpy arrays to single numpy arrays
+        states = np.array(states)
+        actions = np.array(actions)
+        rewards = np.array(rewards).reshape(-1, 1)
+        next_states = np.array(next_states)
+        
+        # Convert numpy arrays to tensors
         states = torch.FloatTensor(states)
         actions = torch.FloatTensor(actions)
-        rewards = torch.FloatTensor(rewards).unsqueeze(1)
+        rewards = torch.FloatTensor(rewards)
         next_states = torch.FloatTensor(next_states)
         
         with torch.no_grad():
@@ -126,39 +133,64 @@ class UnitySocket:
         print('Connected to Unity')
     
     def receive_state(self):
-        data = self.conn.recv(STATE_DIM * 4)
+        data = b''
+        while len(data) < STATE_DIM * 4:
+            packet = self.conn.recv(STATE_DIM * 4 - len(data))
+            if not packet:
+                raise ConnectionError("Socket connection broken")
+            data += packet
         return struct.unpack('f' * STATE_DIM, data)
-    
+        
     def send_action(self, action):
         data = struct.pack('f' * ACTION_DIM, *action)
         self.conn.sendall(data)
+    
+    def check_termination_signal(self):
+        if self.conn.recv(1, socket.MSG_PEEK) == b'\xFF':
+            self.conn.recv(1)
+            return True
+        return False
     
     def close(self):
         self.conn.close()
         self.sock.close()
 
-# Reward Calculation
-def calculate_reward(state, next_state):
-    return np.random.random()  # Placeholder for real reward function
 
-# Main Loop
+# Reward Calculation
+def calculate_reward(drone_state, drone_next_state):
+    reward = 0
+    # Example reward components for each drone
+    d1_t, d1_t1 = drone_state[3], drone_next_state[3]  # Distance to target
+    d2_t1, d3_t1 = drone_next_state[5], drone_next_state[7]  # Distances to neighbors
+    min_obstacle_dist = min(drone_next_state[8:])  # Closest obstacle distance
+    
+    transition_reward = np.tanh(0.2 * (10 - drone_next_state[1])) * (d1_t - d1_t1)
+    mutual_reward = (3 * np.exp(0.05 * (d2_t1 - 20)) + 3 * np.exp(0.05 * (d3_t1 - 20))) if 10 <= d2_t1 <= 50 and 10 <= d3_t1 <= 50 else -5
+    obstacle_penalty = -5 if min_obstacle_dist < 10 else 0
+    step_penalty = -3
+    
+    reward = transition_reward + mutual_reward + obstacle_penalty + step_penalty
+    
+    return reward # Average reward across all drones
+
 def main():
     agent = FlockingDDPG(STATE_DIM, ACTION_DIM)
     unity_socket = UnitySocket()
     
     for episode in range(NUM_EPISODES):
+        print("Starting episode", episode)
         total_reward = 0
         for t in range(MAX_STEPS):
             states, actions, next_states, rewards = [], [], [], []
-            
             for drone_id in range(NUM_DRONES):
                 state = unity_socket.receive_state()
                 action = agent.select_action(state)
+                print(f"({action})")
                 unity_socket.send_action(action)
                 next_state = unity_socket.receive_state()
                 reward = calculate_reward(state, next_state)
                 total_reward += reward
-                
+                # print("moving drone", drone_id)
                 agent.replay_buffer.add((state, action, reward, next_state))
                 states.append(state)
                 actions.append(action)
@@ -166,6 +198,11 @@ def main():
                 rewards.append(reward)
                 
             agent.train()
+
+            # Check for termination signal from Unity
+            if unity_socket.check_termination_signal():
+                print("Episode terminated early")
+                break
         
         print(f"Episode {episode}, Total Reward: {total_reward}")
     
