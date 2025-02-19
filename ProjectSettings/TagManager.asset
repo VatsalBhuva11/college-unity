@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - drone
+  - Obstacle
   layers:
   - Default
   - TransparentFX
