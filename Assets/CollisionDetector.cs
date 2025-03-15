@@ -6,7 +6,7 @@ public class CollisionDetector : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Obstacle"))
+        if (collision.gameObject.CompareTag("Obstacle") || collision.gameObject.CompareTag("drone"))
         {
             HasCollided = true;
         }
