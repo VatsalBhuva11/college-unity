@@ -16,7 +16,7 @@ TAU = 0.005
 ACTOR_LR = 0.0001
 CRITIC_LR = 0.0002
 NUM_DRONES = 3
-STATE_DIM = 17
+STATE_DIM = 18
 ACTION_DIM = 2
 NUM_EPISODES = 1000
 MAX_STEPS = 500
@@ -230,15 +230,21 @@ def main():
         print("Starting episode", episode)
         total_reward = 0
         for t in range(MAX_STEPS):
+            print(f"Step: {t}")
             states = unity_socket.receive_state()
             # STATE_DIM+1 to account for episode info as well (whether done or not)
             # 1 means episode done, 0 means not done.
-            states = [states[(STATE_DIM+1)*i:(STATE_DIM+1)*(i+1)] for i in range(NUM_DRONES)]
 
-            actions = [agent.select_action(state, add_noise=True) for state in states]  # Add noise during training
+            states = [states[STATE_DIM*i:STATE_DIM*(i+1)] for i in range(NUM_DRONES)]
+
+            actions_tmp = [agent.select_action(state, add_noise=True) for state in states]  # Add noise during training
+            actions = []
+            for row in actions_tmp:
+                for action in row:
+                    actions.append(action)
             unity_socket.send_action(actions)
             next_states = unity_socket.receive_state()
-            next_states = [next_states[(STATE_DIM+1)*i:(STATE_DIM+1)*(i+1)] for i in range(NUM_DRONES)]
+            next_states = [next_states[STATE_DIM*i:STATE_DIM*(i+1)] for i in range(NUM_DRONES)]
 
             over = False
             status = "[reached target]"
@@ -252,7 +258,7 @@ def main():
                         status = "[collision]"
                 reward = calculate_reward(states[i], next_states[i])
                 total_reward += reward
-                agent.replay_buffer.add((states[i], actions[i], reward, next_states[i]))
+                agent.replay_buffer.add((states[i], actions_tmp[i], reward, next_states[i]))
             agent.train()
             if over:
                 print(f"Episode ended: {status}")

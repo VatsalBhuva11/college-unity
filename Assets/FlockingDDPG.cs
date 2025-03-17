@@ -129,6 +129,10 @@ public class FlockingDrones : MonoBehaviour
             allStates[i * (STATE_DIM + 1) + STATE_DIM] = episodeTerminated ? 1 : 0; // Termination flag
         }
         byte[] data = new byte[allStates.Length * 4];
+        foreach (float state in allStates)
+{
+    Debug.Log(state);
+}
         Buffer.BlockCopy(allStates, 0, data, 0, data.Length);
         stream.Write(data, 0, data.Length);
         stream.Flush();
@@ -166,7 +170,7 @@ public class FlockingDrones : MonoBehaviour
         Rigidbody rb = drone.GetComponent<Rigidbody>();
         float steering = action[0];
         float throttle = action[1];
-        float maxSteeringAngle = Mathf.PI / 16;
+        float maxSteeringAngle = Mathf.PI / 4;
         float targetTurnAngle = steering * maxSteeringAngle * Mathf.Rad2Deg;
         StartCoroutine(RotateDroneOverTime(drone, targetTurnAngle, 0.05f));
         Vector3 force = drone.transform.forward * throttle * 10f;
@@ -219,12 +223,6 @@ public class FlockingDrones : MonoBehaviour
         return true;
     }
 
-    void SendTerminationSignal()
-    {
-        byte[] signal = new byte[1] { 0xFF }; // CMD_TERMINATE
-        stream.Write(signal, 0, signal.Length);
-        stream.Flush();
-    }
 
     IEnumerator CommunicationLoop()
     {
@@ -238,11 +236,13 @@ public class FlockingDrones : MonoBehaviour
 
             // Apply actions to drones
             ApplyActionsToDrones(actions);
+            
+            // Send updated states to Python
+            SendStatesToPython();
 
             // Check termination conditions
             if (CheckTerminationConditions())
             {
-                SendTerminationSignal();
                 ResetDrones();
                 episodeTerminated = false;
             }
