@@ -16,7 +16,7 @@ public class FlockingDrones : MonoBehaviour
     private Vector3[] initialDronePositions;
     private Quaternion[] initialDroneRotations;
 
-    private bool episodeTerminated = false;
+    private int terminationFlag = 0; // 0: running, 1: target reached, 2: collision
 
     void Start()
     {
@@ -40,6 +40,7 @@ public class FlockingDrones : MonoBehaviour
                 collisionDetector.HasCollided = false;
             }
         }
+        terminationFlag = 0; // Reset termination flag
     }
 
     void StoreInitialPositions()
@@ -118,21 +119,40 @@ public class FlockingDrones : MonoBehaviour
         return state;
     }
 
-    // Sends the states of all drones to Python.
+    // Sends the states of all drones to Python with individual termination flags
     void SendStatesToPython()
     {
-        float[] allStates = new float[NUM_DRONES * (STATE_DIM + 1)]; // +1 for termination flag
+        float[] allStates = new float[NUM_DRONES * (STATE_DIM + 1)]; // +1 for termination flag per drone
+        
         for (int i = 0; i < NUM_DRONES; i++)
         {
             float[] state = GetDroneState(drones[i]);
             Array.Copy(state, 0, allStates, i * (STATE_DIM + 1), STATE_DIM);
-            allStates[i * (STATE_DIM + 1) + STATE_DIM] = episodeTerminated ? 1 : 0; // Termination flag
+            
+            // Individual termination flag per drone
+            // Check if this specific drone has reached target or collided
+            int droneTerminationFlag = 0;
+            if (terminationFlag == 1) // Target reached (all drones)
+            {
+                droneTerminationFlag = 1;
+            }
+            else if (terminationFlag == 2) // Collision occurred
+            {
+                // Mark this drone as terminated if it collided
+                if (drones[i].GetComponent<CollisionDetector>().HasCollided)
+                {
+                    droneTerminationFlag = 2;
+                }
+                else
+                {
+                    droneTerminationFlag = 2; // All drones terminate on any collision
+                }
+            }
+            
+            allStates[i * (STATE_DIM + 1) + STATE_DIM] = droneTerminationFlag;
         }
+        
         byte[] data = new byte[allStates.Length * 4];
-        foreach (float state in allStates)
-{
-    Debug.Log(state);
-}
         Buffer.BlockCopy(allStates, 0, data, 0, data.Length);
         stream.Write(data, 0, data.Length);
         stream.Flush();
@@ -192,15 +212,22 @@ public class FlockingDrones : MonoBehaviour
     }
 
     // Checks termination conditions (collision or target reached).
-    bool CheckTerminationConditions()
+    void CheckTerminationConditions()
     {
-        if (CheckCollision() || CheckTargetReached())
+        if (CheckCollision())
         {
-            Debug.Log("Episode Ended: termination condition met.");
-            episodeTerminated = true;
-            return true;
+            Debug.Log("Episode Ended: Collision detected.");
+            terminationFlag = 2; // Collision
         }
-        return false;
+        else if (CheckTargetReached())
+        {
+            Debug.Log("Episode Ended: Target reached.");
+            terminationFlag = 1; // Target reached
+        }
+        else
+        {
+            terminationFlag = 0; // Still running
+        }
     }
 
     bool CheckCollision()
@@ -223,31 +250,31 @@ public class FlockingDrones : MonoBehaviour
         return true;
     }
 
-
     IEnumerator CommunicationLoop()
     {
         while (true)
         {
-            // Send states to Python
+            // 1. Send current states to Python
             SendStatesToPython();
 
-            // Receive actions from Python
+            // 2. Receive actions from Python
             float[] actions = ReceiveActionsFromPython();
 
-            // Apply actions to drones
+            // 3. Apply actions to drones
             ApplyActionsToDrones(actions);
-            
-            // Send updated states to Python
-            SendStatesToPython();
 
-            // Check termination conditions
-            if (CheckTerminationConditions())
+            // 4. Wait for physics update
+            yield return new WaitForFixedUpdate();
+
+            // 5. Check termination conditions AFTER physics update
+            //    This ensures the next state reflects the action's effect
+            CheckTerminationConditions();
+
+            // 6. If episode ended, reset for next episode
+            if (terminationFlag != 0)
             {
                 ResetDrones();
-                episodeTerminated = false;
             }
-
-            yield return new WaitForFixedUpdate();
         }
     }
 
