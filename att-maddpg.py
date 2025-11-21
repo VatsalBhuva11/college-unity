@@ -28,6 +28,11 @@ MAX_STEPS = 500
 MODEL_DIR = "saved_models"
 LOG_FILE = "training_log.txt"
 
+# Exploration settings
+NOISE_START = 0.5
+NOISE_END = 0.05
+NOISE_DECAY_EPISODES = 700
+
 # Ensure model directory exists
 if not os.path.exists(MODEL_DIR):
     os.makedirs(MODEL_DIR)
@@ -139,7 +144,7 @@ class ATT_MADDPG:
         self.value_losses = []
         self.policy_losses = []
 
-    def select_actions(self, states, add_noise=True):
+    def select_actions(self, states, noise_scale=0.0):
         """
         states: np.array shape (NUM_DRONES, state_dim)
         Returns: numpy array shape (NUM_DRONES, ACTION_DIM) with
@@ -150,11 +155,15 @@ class ATT_MADDPG:
         for i, agent in enumerate(self.agents):
             state = torch.FloatTensor(states[i]).unsqueeze(0).to(device)  # (1, S)
             raw_action = agent.actor(state).detach().cpu().numpy()[0]     # in [-1,1] per component
+            
             # add exploration noise to the *raw* output (before throttle remap)
-            if add_noise:
-                raw_action += np.random.normal(0, 0.1, size=self.action_dim)
+            if noise_scale > 0:
+                noise = np.random.normal(0, noise_scale, size=self.action_dim)
+                raw_action += noise
+                
             # clip raw to [-1,1] to keep stable
             raw_action = np.clip(raw_action, -1.0, 1.0)
+            
             # Map throttle (assume index 1 is throttle) from [-1,1] -> [0,1]
             steering = float(raw_action[0])                  # keep in [-1,1]
             throttle_norm = float((raw_action[1] + 1.0) / 2.0)  # map to [0,1]
@@ -332,9 +341,17 @@ def main():
             episode_over = False
             status_code = 0
             
+            # Calculate noise scale for this episode (linear decay)
+            if training_mode:
+                noise_scale = NOISE_START - (episode / NOISE_DECAY_EPISODES) * (NOISE_START - NOISE_END)
+                noise_scale = max(NOISE_END, noise_scale)
+            else:
+                noise_scale = 0.0
+            
             while step < MAX_STEPS:
-                # In inference mode, we don't add noise
-                actions = maddpg.select_actions(states, add_noise=training_mode)
+                # Select actions with decaying noise
+                actions = maddpg.select_actions(states, noise_scale=noise_scale)
+                
                 unity.send_action(actions)
                 next_states, rewards, flags = unity.receive_state()
                 
@@ -358,8 +375,10 @@ def main():
                 
                 # Detailed logging every 50 steps or end of episode
                 if step % 50 == 0 or episode_over:
-                    s_info = format_state(states[0])
-                    print(f"Step {step}: Reward {rewards[0]:.2f}, {s_info}, Act:{actions[0]}")
+                    print(f"--- Step {step} ---")
+                    for d_i in range(NUM_DRONES):
+                        s_info = format_state(states[d_i])
+                        print(f"  Drone {d_i}: Rew:{rewards[d_i]:.2f}, {s_info}, Act:{actions[d_i]}")
                 
                 if episode_over:
                     status_str = "Target Reached" if status_code == 1 else "Collision"

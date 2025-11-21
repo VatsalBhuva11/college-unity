@@ -19,7 +19,7 @@ public class FlockingDrones : MonoBehaviour
 
     private int terminationFlag = 0; // 0: running, 1: target reached, 2: collision
     public float MAX_SPEED = 10f;          // tune based on environment
-    public float MAX_STEERING_DEG = 45f;   // max steering angle in degrees
+    public float MAX_STEERING_DEG = 10f;   // max steering angle in degrees
 
 
     void Start()
