@@ -13,10 +13,10 @@ import datetime
 
 # Hyperparameters
 MAX_MEMORY = 100000
-BATCH_SIZE = 64
+BATCH_SIZE = 256        # Increased from 64 for stability
 GAMMA = 0.99
 TAU = 0.01
-ACTOR_LR = 0.001
+ACTOR_LR = 0.0001       # Reduced from 0.001 to prevent policy collapse
 CRITIC_LR = 0.001
 NUM_DRONES = 3
 STATE_DIM = 17  # Excludes reward and termination flag

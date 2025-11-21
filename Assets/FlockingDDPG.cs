@@ -43,7 +43,11 @@ public class FlockingDrones : MonoBehaviour
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             drones[i].transform.position = initialDronePositions[i];
-            drones[i].transform.rotation = initialDroneRotations[i];
+            
+            // Randomize rotation slightly to encourage diverse exploration
+            float randomY = UnityEngine.Random.Range(-180f, 180f);
+            drones[i].transform.rotation = Quaternion.Euler(0, randomY, 0);
+            
             CollisionDetector collisionDetector = drones[i].GetComponent<CollisionDetector>();
             if (collisionDetector != null)
             {
@@ -168,13 +172,20 @@ public class FlockingDrones : MonoBehaviour
         if (actions != null)
         {
             float steering = actions[0];
-            reward -= Mathf.Abs(steering) * 2.0f; 
+            reward -= Mathf.Abs(steering) * 0.5f; // Reduced from 2.0f to allow necessary turns
         }
         
         // 7. Movement incentive
         // If velocity (index 1) is very low, penalize slightly
         float velocity = currentState[1];
-        if (velocity < 0.5f) reward -= 1.0f;
+        if (velocity < 0.5f) reward -= 2.0f; // Increased penalty for stagnation
+
+        // 8. Alignment Incentive (New)
+        // state[2] is angle to target in degrees [0, 180]
+        // Reward facing the target to guide exploration
+        float angleToTarget = currentState[2];
+        float alignmentReward = (1.0f - (angleToTarget / 180.0f)) * 2.0f;
+        reward += alignmentReward;
 
         return reward;
     }
