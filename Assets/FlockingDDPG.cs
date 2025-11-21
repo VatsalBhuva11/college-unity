@@ -135,29 +135,47 @@ public class FlockingDrones : MonoBehaviour
         return state;
     }
     
-    float CalculateReward(int droneIndex, float[] currentState, int doneFlag)
+    float CalculateReward(int droneIndex, float[] currentState, int doneFlag, float[] actions)
     {
         float curDist = currentState[3]; // Distance to target is at index 3
         float prevDist = prevDistToTarget[droneIndex];
         
-        float reward = (prevDist - curDist) * 10f;
+        // 1. Base movement reward
+        float reward = (prevDist - curDist) * 100f;
         
-        if (doneFlag == 1) reward += 50f;
-        else if (doneFlag == 2) reward -= 50f;
+        // 2. Target reached / Collision
+        if (doneFlag == 1) reward += 100f;
+        else if (doneFlag == 2) reward -= 100f;
         
+        // 3. Flocking
         float minDist1 = currentState[5]; // Min dist neighbor is at index 5
-        if (minDist1 < 5f) reward -= 10f;
-        else if (minDist1 >= 10f && minDist1 <= 30f) reward += 2f;
+        if (minDist1 < 5f) reward -= 20f;
+        else if (minDist1 >= 10f && minDist1 <= 30f) reward += 5f;
         
-        // Obstacles indices 8 to 16 (9 rays)
+        // 4. Obstacles indices 8 to 16 (9 rays)
         float minObstacle = 40f;
         for (int i = 8; i <= 16; i++) {
             if (currentState[i] < minObstacle) minObstacle = currentState[i];
         }
+        if (minObstacle < 10f) reward -= 10f * (10f - minObstacle);
         
-        if (minObstacle < 10f) reward -= 5f * (10f - minObstacle);
+        // 5. Step penalty
+        reward -= 0.5f; 
         
-        reward -= 0.1f; // Step penalty
+        // 6. Action Smoothness / Steering Penalty
+        // actions[0] is steering ([-1,1])
+        // Penalize sharp turns to avoid "aggressive rotating"
+        if (actions != null)
+        {
+            float steering = actions[0];
+            reward -= Mathf.Abs(steering) * 2.0f; 
+        }
+        
+        // 7. Movement incentive
+        // If velocity (index 1) is very low, penalize slightly
+        float velocity = currentState[1];
+        if (velocity < 0.5f) reward -= 1.0f;
+
         return reward;
     }
 
@@ -334,8 +352,16 @@ public class FlockingDrones : MonoBehaviour
             float[] rewards = new float[NUM_DRONES];
             for(int i=0; i<NUM_DRONES; i++) {
                 float[] state = GetDroneState(drones[i]);
+                
+                // Extract action for this drone to pass to reward function
+                float[] droneAction = new float[ACTION_DIM];
+                if (actions != null)
+                    Array.Copy(actions, i * ACTION_DIM, droneAction, 0, ACTION_DIM);
+                else 
+                    droneAction = null;
+
                 // Flag is global (terminationFlag)
-                rewards[i] = CalculateReward(i, state, terminationFlag);
+                rewards[i] = CalculateReward(i, state, terminationFlag, droneAction);
             }
             
             // 6. Send the NEXT state, Reward, and Flag

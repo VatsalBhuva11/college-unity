@@ -66,6 +66,9 @@ class Actor(nn.Module):
     def forward(self, state):
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
+        # Output in [-1, 1] for both dimensions
+        # We interpret act[0] as steering [-1, 1]
+        # We interpret act[1] as throttle raw [-1, 1] -> mapped to [0, 1] later
         return torch.tanh(self.fc3(x))
 
 class AttentionCritic(nn.Module):
@@ -172,20 +175,42 @@ class ATT_MADDPG:
         for i, agent in enumerate(self.agents):
             next_actions = []
             for j, other_agent in enumerate(self.agents):
-                next_actions.append(other_agent.target_actor(next_obs[:, j, :]))
+                # Get target action
+                raw_next_action = other_agent.target_actor(next_obs[:, j, :])
+                # We must apply the same transformation to target actions as we do to real actions
+                # However, the critic expects the raw output or the transformed one? 
+                # Typically DDPG critic takes the output of the actor directly.
+                # But if our environment sees [0,1], and actor outputs [-1,1], there's a mismatch if we don't transform.
+                # SIMPLIFICATION: Let's feed the raw [-1,1] actions to the critic to avoid complex graph logic,
+                # BUT we must remember that 'act' from buffer is ALREADY transformed to [0,1] for throttle by select_actions.
+                # This is a problem. The buffer stores what was sent to Unity ([0,1] throttle).
+                # The actor outputs [-1,1].
+                # We should store the RAW actions in the buffer or transform actor output here.
+                # Let's transform the actor output here to match the buffer distribution.
+                
+                # Transform raw [-1,1] -> steering [-1,1], throttle [0,1]
+                # Steering is index 0, Throttle is index 1
+                steering = raw_next_action[:, 0:1]
+                throttle_raw = raw_next_action[:, 1:2]
+                throttle = (throttle_raw + 1.0) / 2.0
+                next_actions.append(torch.cat([steering, throttle], dim=1))
+                
             next_actions = torch.stack(next_actions, dim=1)
+            
             target_ego_state = next_obs[:, i, :]
             target_ego_action = next_actions[:, i, :]
             target_others_states = torch.cat([next_obs[:, :i, :], next_obs[:, i+1:, :]], dim=1)
             target_others_actions = torch.cat([next_actions[:, :i, :], next_actions[:, i+1:, :]], dim=1)
+            
             with torch.no_grad():
                 target_q = agent.target_critic(target_ego_state, target_ego_action, target_others_states, target_others_actions)
                 y = rew[:, i].unsqueeze(1) + GAMMA * target_q * (1 - done[:, i].unsqueeze(1))
             
             ego_state = obs[:, i, :]
-            ego_action = act[:, i, :]
+            ego_action = act[:, i, :] # This is from buffer, so it is already [steering, throttle_01]
             others_states = torch.cat([obs[:, :i, :], obs[:, i+1:, :]], dim=1)
             others_actions = torch.cat([act[:, :i, :], act[:, i+1:, :]], dim=1)
+            
             current_q = agent.critic(ego_state, ego_action, others_states, others_actions)
             critic_loss = F.mse_loss(current_q, y)
             agent.critic_optimizer.zero_grad()
@@ -194,7 +219,13 @@ class ATT_MADDPG:
             agent.critic_optimizer.step()
             self.value_losses.append(critic_loss.item())
 
-            curr_pol_out = agent.actor(ego_state)
+            # Actor Update
+            raw_curr_pol = agent.actor(ego_state)
+            # Apply transformation to match critic expectation
+            steering_curr = raw_curr_pol[:, 0:1]
+            throttle_curr = (raw_curr_pol[:, 1:2] + 1.0) / 2.0
+            curr_pol_out = torch.cat([steering_curr, throttle_curr], dim=1)
+            
             actor_loss = -agent.critic(ego_state, curr_pol_out, others_states, others_actions).mean()
             agent.actor_optimizer.zero_grad()
             actor_loss.backward()
@@ -262,10 +293,18 @@ class UnitySocket:
             self.conn.close()
         self.sock.close()
 
-def log_training(episode, steps, total_reward, status):
+def log_training(episode, steps, total_reward, status, states_info=None):
     with open(LOG_FILE, "a") as f:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         f.write(f"[{timestamp}] Episode: {episode}, Steps: {steps}, Total Reward: {total_reward:.2f}, Status: {status}\n")
+        if states_info:
+             f.write(f"  State Snapshot (Agent 0): {states_info}\n")
+
+def format_state(state):
+    # state: [17]
+    # 0: yaw, 1: vel, 2: angle_target, 3: dist_target, 4: ang_n1, 5: dist_n1, 6: ang_n2, 7: dist_n2, 8-16: sensors
+    return (f"Yaw:{state[0]:.1f}, Vel:{state[1]:.2f}, AngTarg:{state[2]:.1f}, DistTarg:{state[3]:.1f}, "
+            f"DistN1:{state[5]:.1f}, DistN2:{state[7]:.1f}, MinObs:{np.min(state[8:]):.1f}")
 
 def main():
     maddpg = ATT_MADDPG(NUM_DRONES, STATE_DIM, ACTION_DIM)
@@ -317,10 +356,16 @@ def main():
                 total_reward += sum(rewards)
                 step += 1
                 
+                # Detailed logging every 50 steps or end of episode
+                if step % 50 == 0 or episode_over:
+                    s_info = format_state(states[0])
+                    print(f"Step {step}: Reward {rewards[0]:.2f}, {s_info}, Act:{actions[0]}")
+                
                 if episode_over:
                     status_str = "Target Reached" if status_code == 1 else "Collision"
                     print(f"Episode ended. Status: {status_str}")
-                    log_training(episode, step, total_reward, status_str)
+                    # Log detailed state of agent 0 at end
+                    log_training(episode, step, total_reward, status_str, format_state(states[0]))
                     states, _, _ = unity.receive_state()
                     break
             
