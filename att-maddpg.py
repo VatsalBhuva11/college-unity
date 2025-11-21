@@ -29,9 +29,10 @@ MODEL_DIR = "saved_models"
 LOG_FILE = "training_log.txt"
 
 # Exploration settings
-NOISE_START = 0.5
-NOISE_END = 0.05
-NOISE_DECAY_EPISODES = 700
+WARMUP_EPISODES = 50    # Pure exploration phase
+NOISE_START = 1.0       # High initial noise
+NOISE_END = 0.1
+NOISE_DECAY_EPISODES = 500
 
 # Ensure model directory exists
 if not os.path.exists(MODEL_DIR):
@@ -61,6 +62,25 @@ class ReplayBuffer:
     def size(self):
         return len(self.buffer)
 
+class OUNoise:
+    """Ornstein-Uhlenbeck process for temporally correlated noise."""
+    def __init__(self, action_dim, mu=0.0, theta=0.15, sigma=0.3):
+        self.action_dim = action_dim
+        self.mu = mu
+        self.theta = theta
+        self.sigma = sigma
+        self.state = np.ones(self.action_dim) * self.mu
+        self.reset()
+
+    def reset(self):
+        self.state = np.ones(self.action_dim) * self.mu
+
+    def sample(self):
+        x = self.state
+        dx = self.theta * (self.mu - x) + self.sigma * np.random.randn(self.action_dim)
+        self.state = x + dx
+        return self.state
+
 class Actor(nn.Module):
     def __init__(self, state_dim, action_dim):
         super(Actor, self).__init__()
@@ -72,8 +92,6 @@ class Actor(nn.Module):
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
         # Output in [-1, 1] for both dimensions
-        # We interpret act[0] as steering [-1, 1]
-        # We interpret act[1] as throttle raw [-1, 1] -> mapped to [0, 1] later
         return torch.tanh(self.fc3(x))
 
 class AttentionCritic(nn.Module):
@@ -123,6 +141,12 @@ class Agent:
         self.target_critic = AttentionCritic(state_dim, action_dim).to(device)
         self.target_critic.load_state_dict(self.critic.state_dict())
         self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=CRITIC_LR)
+        
+        # Initialize OU Noise
+        self.noise = OUNoise(action_dim)
+
+    def reset_noise(self):
+        self.noise.reset()
 
     def save(self, path, index):
         torch.save(self.actor.state_dict(), os.path.join(path, f"agent_{index}_actor.pth"))
@@ -144,31 +168,29 @@ class ATT_MADDPG:
         self.value_losses = []
         self.policy_losses = []
 
+    def reset_noise(self):
+        for agent in self.agents:
+            agent.reset_noise()
+
     def select_actions(self, states, noise_scale=0.0):
         """
         states: np.array shape (NUM_DRONES, state_dim)
-        Returns: numpy array shape (NUM_DRONES, ACTION_DIM) with
-        action[:,0] = steering_norm in [-1,1]
-        action[:,1] = throttle_norm in [0,1]  (no negatives)
+        Returns: numpy array shape (NUM_DRONES, ACTION_DIM) with values in [-1, 1]
         """
         actions = []
         for i, agent in enumerate(self.agents):
             state = torch.FloatTensor(states[i]).unsqueeze(0).to(device)  # (1, S)
-            raw_action = agent.actor(state).detach().cpu().numpy()[0]     # in [-1,1] per component
+            raw_action = agent.actor(state).detach().cpu().numpy()[0]     # in [-1,1]
             
-            # add exploration noise to the *raw* output (before throttle remap)
+            # Add OU exploration noise
             if noise_scale > 0:
-                noise = np.random.normal(0, noise_scale, size=self.action_dim)
+                noise = agent.noise.sample() * noise_scale
                 raw_action += noise
                 
-            # clip raw to [-1,1] to keep stable
-            raw_action = np.clip(raw_action, -1.0, 1.0)
+            # Clip to valid range
+            action = np.clip(raw_action, -1.0, 1.0)
+            actions.append(action)
             
-            # Map throttle (assume index 1 is throttle) from [-1,1] -> [0,1]
-            steering = float(raw_action[0])                  # keep in [-1,1]
-            throttle_norm = float((raw_action[1] + 1.0) / 2.0)  # map to [0,1]
-            throttle_norm = np.clip(throttle_norm, 0.0, 1.0)    # ensure non-negative
-            actions.append([steering, throttle_norm])
         return np.array(actions, dtype=np.float32)
 
     def update(self):
@@ -186,22 +208,8 @@ class ATT_MADDPG:
             for j, other_agent in enumerate(self.agents):
                 # Get target action
                 raw_next_action = other_agent.target_actor(next_obs[:, j, :])
-                # We must apply the same transformation to target actions as we do to real actions
-                # However, the critic expects the raw output or the transformed one? 
-                # Typically DDPG critic takes the output of the actor directly.
-                # But if our environment sees [0,1], and actor outputs [-1,1], there's a mismatch if we don't transform.
-                # SIMPLIFICATION: Let's feed the raw [-1,1] actions to the critic to avoid complex graph logic,
-                # BUT we must remember that 'act' from buffer is ALREADY transformed to [0,1] for throttle by select_actions.
-                # This is a problem. The buffer stores what was sent to Unity ([0,1] throttle).
-                # The actor outputs [-1,1].
-                # We should store the RAW actions in the buffer or transform actor output here.
-                # Let's transform the actor output here to match the buffer distribution.
-                
-                # Transform raw [-1,1] -> steering [-1,1], throttle [0,1]
-                # Steering is index 0, Throttle is index 1
                 steering = raw_next_action[:, 0:1]
-                throttle_raw = raw_next_action[:, 1:2]
-                throttle = (throttle_raw + 1.0) / 2.0
+                throttle = raw_next_action[:, 1:2] 
                 next_actions.append(torch.cat([steering, throttle], dim=1))
                 
             next_actions = torch.stack(next_actions, dim=1)
@@ -216,7 +224,7 @@ class ATT_MADDPG:
                 y = rew[:, i].unsqueeze(1) + GAMMA * target_q * (1 - done[:, i].unsqueeze(1))
             
             ego_state = obs[:, i, :]
-            ego_action = act[:, i, :] # This is from buffer, so it is already [steering, throttle_01]
+            ego_action = act[:, i, :] 
             others_states = torch.cat([obs[:, :i, :], obs[:, i+1:, :]], dim=1)
             others_actions = torch.cat([act[:, :i, :], act[:, i+1:, :]], dim=1)
             
@@ -230,10 +238,7 @@ class ATT_MADDPG:
 
             # Actor Update
             raw_curr_pol = agent.actor(ego_state)
-            # Apply transformation to match critic expectation
-            steering_curr = raw_curr_pol[:, 0:1]
-            throttle_curr = (raw_curr_pol[:, 1:2] + 1.0) / 2.0
-            curr_pol_out = torch.cat([steering_curr, throttle_curr], dim=1)
+            curr_pol_out = raw_curr_pol
             
             actor_loss = -agent.critic(ego_state, curr_pol_out, others_states, others_actions).mean()
             agent.actor_optimizer.zero_grad()
@@ -336,6 +341,9 @@ def main():
             
             if states is None: break
             
+            if training_mode:
+                maddpg.reset_noise()
+            
             total_reward = 0
             step = 0
             episode_over = False
@@ -349,8 +357,15 @@ def main():
                 noise_scale = 0.0
             
             while step < MAX_STEPS:
-                # Select actions with decaying noise
-                actions = maddpg.select_actions(states, noise_scale=noise_scale)
+                
+                # Warmup phase: use high correlated noise or pure random?
+                # Since we have OUNoise, we just rely on high noise_scale during warmup.
+                # We can force full exploration during warmup if we want.
+                current_noise_scale = noise_scale
+                if training_mode and episode < WARMUP_EPISODES:
+                    current_noise_scale = 1.5 # Boost noise during warmup
+                
+                actions = maddpg.select_actions(states, noise_scale=current_noise_scale)
                 
                 unity.send_action(actions)
                 next_states, rewards, flags = unity.receive_state()

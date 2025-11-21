@@ -96,7 +96,8 @@ public class FlockingDrones : MonoBehaviour
         state[0] = drone.transform.eulerAngles.y;
         state[1] = rb.velocity.magnitude;
         Vector3 toTarget = target.position - drone.transform.position;
-        state[2] = Vector3.Angle(drone.transform.forward, toTarget);
+        // Use SignedAngle to provide directional context (left vs right)
+        state[2] = Vector3.SignedAngle(drone.transform.forward, toTarget, Vector3.up);
         state[3] = toTarget.magnitude;
         float minDist1 = float.MaxValue, minDist2 = float.MaxValue;
         float angle1 = 0, angle2 = 0;
@@ -144,11 +145,11 @@ public class FlockingDrones : MonoBehaviour
         float curDist = currentState[3]; // Distance to target is at index 3
         float prevDist = prevDistToTarget[droneIndex];
         
-        // 1. Base movement reward
-        float reward = (prevDist - curDist) * 100f;
+        // 1. Base movement reward (Increased weight)
+        float reward = (prevDist - curDist) * 200f;
         
         // 2. Target reached / Collision
-        if (doneFlag == 1) reward += 100f;
+        if (doneFlag == 1) reward += 200f;
         else if (doneFlag == 2) reward -= 100f;
         
         // 3. Flocking
@@ -180,12 +181,15 @@ public class FlockingDrones : MonoBehaviour
         float velocity = currentState[1];
         if (velocity < 0.5f) reward -= 2.0f; // Increased penalty for stagnation
 
-        // 8. Alignment Incentive (New)
-        // state[2] is angle to target in degrees [0, 180]
-        // Reward facing the target to guide exploration
-        float angleToTarget = currentState[2];
-        float alignmentReward = (1.0f - (angleToTarget / 180.0f)) * 2.0f;
-        reward += alignmentReward;
+        // 8. Velocity Direction Incentive
+        // Instead of facing angle, reward moving towards the target (dot product of velocity and direction)
+        // We need direction to target. state[2] is signed angle, state[3] is dist.
+        // Let's re-calculate precise direction vector here or pass it?
+        // Simpler: Reward (prevDist - curDist) is already doing this physically.
+        // But explicitly rewarding the velocity vector alignment can help.
+        // However, we don't have the velocity vector in 'currentState', only magnitude.
+        // So we rely heavily on Item 1 (Distance Delta).
+        // Removed the "Facing Alignment" reward to allow backward movement.
 
         return reward;
     }
@@ -258,11 +262,11 @@ public class FlockingDrones : MonoBehaviour
             prevDistToTarget[i] = Vector3.Distance(drones[i].transform.position, target.position);
             
             float steering_norm = actions[i * ACTION_DIM + 0]; // [-1,1]
-            float throttle_norm = actions[i * ACTION_DIM + 1]; // [0,1] by our protocol
+            float throttle_norm = actions[i * ACTION_DIM + 1]; // [-1,1] - Allow backward
 
             // clip to safe ranges just in case
             steering_norm = Mathf.Clamp(steering_norm, -1f, 1f);
-            throttle_norm = Mathf.Clamp(throttle_norm, 0f, 1f); // ensures non-negative
+            throttle_norm = Mathf.Clamp(throttle_norm, -1f, 1f); // Allow negative
 
             ApplyActionToDrone(drones[i], steering_norm, throttle_norm);
         }
@@ -274,7 +278,7 @@ public class FlockingDrones : MonoBehaviour
         // Steering: convert [-1,1] -> [-MAX_STEERING_DEG, MAX_STEERING_DEG]
         float targetTurnAngle = steering_norm * MAX_STEERING_DEG;
 
-        // throttle_norm is [0,1] -> scale to speed/accel
+        // throttle_norm is [-1,1] -> scale to speed/accel
         float appliedForwardSpeed = throttle_norm * MAX_SPEED;
 
         // rotate over time (as before)
