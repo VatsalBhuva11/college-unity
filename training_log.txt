@@ -1,0 +1,716 @@
+[2025-11-21 17:01:20] Episode: 0, Steps: 216, Total Reward: -14109.59, Status: All Collided
+  State Snapshot (Agent 0): Yaw:354.1, Vel:0.56, AngTarg:153.3, DistTarg:14.5, DistN1:5.2, AlignN1:0.98, MinObs:0.9
+[2025-11-21 17:01:29] Episode: 1, Steps: 435, Total Reward: -50487.77, Status: All Collided
+  State Snapshot (Agent 0): Yaw:52.6, Vel:1.99, AngTarg:126.9, DistTarg:21.8, DistN1:8.8, AlignN1:0.68, MinObs:0.3
+[2025-11-21 17:01:33] Episode: 2, Steps: 189, Total Reward: -21628.78, Status: All Collided
+  State Snapshot (Agent 0): Yaw:323.2, Vel:1.81, AngTarg:-142.9, DistTarg:21.0, DistN1:0.9, AlignN1:0.74, MinObs:0.2
+[2025-11-21 17:01:37] Episode: 3, Steps: 212, Total Reward: -23092.73, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.0, Vel:4.14, AngTarg:164.9, DistTarg:30.8, DistN1:9.3, AlignN1:1.00, MinObs:0.8
+[2025-11-21 17:01:43] Episode: 4, Steps: 296, Total Reward: -65295.95, Status: All Collided
+  State Snapshot (Agent 0): Yaw:42.5, Vel:1.53, AngTarg:134.0, DistTarg:27.5, DistN1:6.7, AlignN1:0.77, MinObs:0.3
+[2025-11-21 17:01:53] Episode: 5, Steps: 497, Total Reward: -87305.33, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.5, Vel:0.81, AngTarg:140.6, DistTarg:7.9, DistN1:15.0, AlignN1:0.92, MinObs:12.0
+[2025-11-21 17:01:59] Episode: 6, Steps: 297, Total Reward: -32358.89, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:45.0, Vel:3.86, AngTarg:150.2, DistTarg:1.9, DistN1:17.8, AlignN1:0.74, MinObs:4.4
+[2025-11-21 17:02:37] Episode: 7, Steps: 311, Total Reward: -70121.57, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:45.0, Vel:2.77, AngTarg:146.2, DistTarg:2.0, DistN1:19.8, AlignN1:0.67, MinObs:0.3
+[2025-11-21 17:02:41] Episode: 8, Steps: 227, Total Reward: -30234.35, Status: All Collided
+  State Snapshot (Agent 0): Yaw:324.4, Vel:1.71, AngTarg:-164.3, DistTarg:7.9, DistN1:12.1, AlignN1:0.79, MinObs:1.5
+[2025-11-21 17:02:48] Episode: 9, Steps: 317, Total Reward: -48737.45, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:331.2, Vel:3.96, AngTarg:-148.6, DistTarg:2.0, DistN1:17.1, AlignN1:0.86, MinObs:3.8
+[2025-11-21 17:02:51] Episode: 10, Steps: 186, Total Reward: -30011.99, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.4, Vel:1.16, AngTarg:164.6, DistTarg:7.3, DistN1:14.9, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:03:00] Episode: 11, Steps: 267, Total Reward: -28337.16, Status: All Collided
+  State Snapshot (Agent 0): Yaw:7.9, Vel:1.42, AngTarg:158.7, DistTarg:7.5, DistN1:15.0, AlignN1:1.00, MinObs:0.5
+[2025-11-21 17:03:06] Episode: 12, Steps: 302, Total Reward: -41360.67, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:45.0, Vel:2.66, AngTarg:142.7, DistTarg:2.0, DistN1:17.4, AlignN1:0.71, MinObs:4.2
+[2025-11-21 17:03:09] Episode: 13, Steps: 165, Total Reward: -20073.23, Status: All Collided
+  State Snapshot (Agent 0): Yaw:345.1, Vel:1.97, AngTarg:172.2, DistTarg:7.9, DistN1:11.5, AlignN1:0.95, MinObs:0.3
+[2025-11-21 17:03:13] Episode: 14, Steps: 177, Total Reward: -23317.31, Status: All Collided
+  State Snapshot (Agent 0): Yaw:341.7, Vel:3.89, AngTarg:-175.4, DistTarg:7.5, DistN1:9.0, AlignN1:0.96, MinObs:0.5
+[2025-11-21 17:03:19] Episode: 15, Steps: 321, Total Reward: -53031.53, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:41.6, Vel:2.97, AngTarg:139.8, DistTarg:2.0, DistN1:17.6, AlignN1:0.79, MinObs:0.3
+[2025-11-21 17:03:27] Episode: 16, Steps: 365, Total Reward: -70612.71, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.0, Vel:3.57, AngTarg:-176.8, DistTarg:2.0, DistN1:17.2, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:03:32] Episode: 17, Steps: 276, Total Reward: -38926.84, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.9, Vel:0.11, AngTarg:160.6, DistTarg:8.2, DistN1:13.3, AlignN1:0.87, MinObs:1.8
+[2025-11-21 17:03:42] Episode: 18, Steps: 500, Total Reward: -86280.97, Status: Timeout
+  State Snapshot (Agent 0): Yaw:2.9, Vel:0.05, AngTarg:166.2, DistTarg:8.0, DistN1:5.2, AlignN1:1.00, MinObs:1.2
+[2025-11-21 17:03:46] Episode: 19, Steps: 180, Total Reward: -19396.74, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.5, Vel:0.03, AngTarg:165.8, DistTarg:15.0, DistN1:1.2, AlignN1:0.99, MinObs:0.9
+[2025-11-21 17:03:55] Episode: 20, Steps: 486, Total Reward: -66099.87, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.8, Vel:0.40, AngTarg:173.1, DistTarg:6.0, DistN1:15.5, AlignN1:1.00, MinObs:2.3
+[2025-11-21 17:04:05] Episode: 21, Steps: 500, Total Reward: -44442.11, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.5, Vel:0.05, AngTarg:162.0, DistTarg:7.3, DistN1:2.0, AlignN1:0.99, MinObs:0.7
+[2025-11-21 17:04:09] Episode: 22, Steps: 170, Total Reward: -10694.26, Status: All Collided
+  State Snapshot (Agent 0): Yaw:25.6, Vel:1.50, AngTarg:141.7, DistTarg:10.6, DistN1:0.5, AlignN1:-0.34, MinObs:0.3
+[2025-11-21 17:04:19] Episode: 23, Steps: 500, Total Reward: -83763.10, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.3, Vel:0.02, AngTarg:163.0, DistTarg:7.3, DistN1:10.1, AlignN1:0.17, MinObs:0.4
+[2025-11-21 17:04:29] Episode: 24, Steps: 500, Total Reward: -109959.61, Status: Timeout
+  State Snapshot (Agent 0): Yaw:1.9, Vel:1.16, AngTarg:169.0, DistTarg:15.4, DistN1:4.5, AlignN1:0.99, MinObs:7.1
+[2025-11-21 17:04:39] Episode: 25, Steps: 500, Total Reward: -89329.14, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.1, Vel:0.09, AngTarg:157.6, DistTarg:7.4, DistN1:10.8, AlignN1:0.02, MinObs:0.4
+[2025-11-21 17:04:49] Episode: 26, Steps: 500, Total Reward: -65444.54, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.7, Vel:0.13, AngTarg:-174.7, DistTarg:2.5, DistN1:7.5, AlignN1:0.71, MinObs:4.5
+[2025-11-21 17:04:59] Episode: 27, Steps: 500, Total Reward: -71551.71, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.1, Vel:0.02, AngTarg:-153.7, DistTarg:2.5, DistN1:3.3, AlignN1:0.94, MinObs:4.5
+[2025-11-21 17:05:07] Episode: 28, Steps: 404, Total Reward: -30656.12, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.4, Vel:1.57, AngTarg:178.4, DistTarg:3.0, DistN1:0.5, AlignN1:1.00, MinObs:0.2
+[2025-11-21 17:05:17] Episode: 29, Steps: 500, Total Reward: -69450.10, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.7, Vel:0.18, AngTarg:169.0, DistTarg:8.8, DistN1:3.0, AlignN1:0.17, MinObs:1.8
+[2025-11-21 17:05:20] Episode: 30, Steps: 177, Total Reward: -28507.61, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.0, Vel:0.04, AngTarg:169.3, DistTarg:16.7, DistN1:1.1, AlignN1:0.99, MinObs:0.8
+[2025-11-21 17:05:23] Episode: 31, Steps: 132, Total Reward: -11959.00, Status: All Collided
+  State Snapshot (Agent 0): Yaw:10.0, Vel:0.72, AngTarg:156.4, DistTarg:15.0, DistN1:1.9, AlignN1:1.00, MinObs:4.7
+[2025-11-21 17:05:33] Episode: 32, Steps: 500, Total Reward: -61784.99, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.6, Vel:0.01, AngTarg:164.6, DistTarg:15.6, DistN1:1.2, AlignN1:1.00, MinObs:1.0
+[2025-11-21 17:05:36] Episode: 33, Steps: 147, Total Reward: -13509.75, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.3, Vel:0.04, AngTarg:164.2, DistTarg:15.6, DistN1:1.8, AlignN1:1.00, MinObs:4.5
+[2025-11-21 17:05:40] Episode: 34, Steps: 225, Total Reward: -23853.58, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.9, Vel:3.88, AngTarg:142.6, DistTarg:12.6, DistN1:4.6, AlignN1:1.00, MinObs:0.8
+[2025-11-21 17:05:42] Episode: 35, Steps: 99, Total Reward: -12336.17, Status: All Collided
+  State Snapshot (Agent 0): Yaw:4.1, Vel:0.42, AngTarg:160.3, DistTarg:15.8, DistN1:0.8, AlignN1:0.98, MinObs:0.7
+[2025-11-21 17:05:46] Episode: 36, Steps: 159, Total Reward: -17326.88, Status: All Collided
+  State Snapshot (Agent 0): Yaw:4.4, Vel:0.10, AngTarg:161.5, DistTarg:15.5, DistN1:1.9, AlignN1:1.00, MinObs:4.4
+[2025-11-21 17:05:52] Episode: 37, Steps: 321, Total Reward: -47739.93, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.6, Vel:0.05, AngTarg:164.1, DistTarg:16.4, DistN1:1.7, AlignN1:1.00, MinObs:2.5
+[2025-11-21 17:06:00] Episode: 38, Steps: 415, Total Reward: -48636.27, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.6, Vel:1.98, AngTarg:68.2, DistTarg:9.7, DistN1:17.3, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:06:07] Episode: 39, Steps: 343, Total Reward: -61506.85, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.1, Vel:0.02, AngTarg:165.3, DistTarg:16.0, DistN1:1.6, AlignN1:1.00, MinObs:4.6
+[2025-11-21 17:06:17] Episode: 40, Steps: 500, Total Reward: -82216.44, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.7, Vel:0.03, AngTarg:73.1, DistTarg:9.4, DistN1:10.9, AlignN1:0.78, MinObs:1.9
+[2025-11-21 17:06:20] Episode: 41, Steps: 137, Total Reward: -12293.44, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.3, Vel:0.16, AngTarg:163.0, DistTarg:14.7, DistN1:1.5, AlignN1:1.00, MinObs:4.1
+[2025-11-21 17:06:24] Episode: 42, Steps: 211, Total Reward: -24128.27, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.9, Vel:0.08, AngTarg:164.9, DistTarg:14.7, DistN1:1.8, AlignN1:0.99, MinObs:1.6
+[2025-11-21 17:06:34] Episode: 43, Steps: 472, Total Reward: -87820.62, Status: All Collided
+  State Snapshot (Agent 0): Yaw:270.4, Vel:1.12, AngTarg:-71.2, DistTarg:16.7, DistN1:10.6, AlignN1:-0.08, MinObs:0.9
+[2025-11-21 17:06:41] Episode: 44, Steps: 386, Total Reward: -58734.08, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.8, Vel:0.02, AngTarg:161.4, DistTarg:15.6, DistN1:2.4, AlignN1:1.00, MinObs:2.2
+[2025-11-21 17:06:47] Episode: 45, Steps: 287, Total Reward: -31677.00, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.7, Vel:0.00, AngTarg:163.1, DistTarg:15.6, DistN1:1.3, AlignN1:1.00, MinObs:1.0
+[2025-11-21 17:08:45] Episode: 46, Steps: 383, Total Reward: -54713.79, Status: All Collided
+  State Snapshot (Agent 0): Yaw:360.0, Vel:0.01, AngTarg:163.6, DistTarg:15.2, DistN1:1.3, AlignN1:1.00, MinObs:1.3
+[2025-11-21 17:08:55] Episode: 47, Steps: 500, Total Reward: -61296.28, Status: Timeout
+  State Snapshot (Agent 0): Yaw:2.5, Vel:0.02, AngTarg:163.4, DistTarg:16.2, DistN1:2.3, AlignN1:1.00, MinObs:3.8
+[2025-11-21 17:09:05] Episode: 48, Steps: 500, Total Reward: -36811.65, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.59, AngTarg:-171.3, DistTarg:22.2, DistN1:8.7, AlignN1:1.00, MinObs:2.4
+[2025-11-21 17:09:13] Episode: 49, Steps: 386, Total Reward: -63101.12, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.0, Vel:0.04, AngTarg:164.1, DistTarg:16.6, DistN1:2.5, AlignN1:1.00, MinObs:6.0
+[2025-11-21 17:09:16] Episode: 50, Steps: 192, Total Reward: -19567.27, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.3, Vel:0.02, AngTarg:161.0, DistTarg:15.0, DistN1:1.5, AlignN1:1.00, MinObs:5.7
+[2025-11-21 17:09:21] Episode: 51, Steps: 214, Total Reward: -24591.42, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.5, Vel:0.19, AngTarg:160.1, DistTarg:13.9, DistN1:1.2, AlignN1:1.00, MinObs:0.9
+[2025-11-21 17:09:27] Episode: 52, Steps: 291, Total Reward: -28375.90, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.8, Vel:0.02, AngTarg:162.9, DistTarg:15.5, DistN1:1.7, AlignN1:1.00, MinObs:4.3
+[2025-11-21 17:09:32] Episode: 53, Steps: 270, Total Reward: -35372.31, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.5, Vel:0.00, AngTarg:163.9, DistTarg:14.9, DistN1:1.5, AlignN1:1.00, MinObs:6.5
+[2025-11-21 17:09:36] Episode: 54, Steps: 182, Total Reward: -31457.94, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.2, Vel:0.04, AngTarg:160.5, DistTarg:15.9, DistN1:1.0, AlignN1:0.99, MinObs:0.9
+[2025-11-21 17:09:46] Episode: 55, Steps: 500, Total Reward: -57524.29, Status: Timeout
+  State Snapshot (Agent 0): Yaw:315.0, Vel:2.66, AngTarg:-133.3, DistTarg:16.0, DistN1:7.2, AlignN1:0.63, MinObs:3.0
+[2025-11-21 17:09:50] Episode: 56, Steps: 236, Total Reward: -20045.96, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.1, Vel:0.01, AngTarg:164.8, DistTarg:14.4, DistN1:1.4, AlignN1:1.00, MinObs:5.3
+[2025-11-21 17:09:57] Episode: 57, Steps: 312, Total Reward: -40296.29, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.0, Vel:0.01, AngTarg:165.4, DistTarg:15.6, DistN1:1.4, AlignN1:1.00, MinObs:4.8
+[2025-11-21 17:10:02] Episode: 58, Steps: 274, Total Reward: -36091.52, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.5, Vel:0.01, AngTarg:164.8, DistTarg:14.7, DistN1:0.9, AlignN1:1.00, MinObs:6.6
+[2025-11-21 17:10:08] Episode: 59, Steps: 285, Total Reward: -21936.15, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.9, Vel:0.02, AngTarg:167.3, DistTarg:13.6, DistN1:1.2, AlignN1:1.00, MinObs:1.1
+[2025-11-21 17:10:18] Episode: 60, Steps: 500, Total Reward: -77727.34, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.6, Vel:0.17, AngTarg:157.8, DistTarg:16.5, DistN1:4.2, AlignN1:1.00, MinObs:1.7
+[2025-11-21 17:10:24] Episode: 61, Steps: 293, Total Reward: -12572.34, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.4, Vel:0.17, AngTarg:144.9, DistTarg:13.5, DistN1:4.6, AlignN1:1.00, MinObs:0.6
+[2025-11-21 17:10:31] Episode: 62, Steps: 391, Total Reward: -37199.38, Status: All Collided
+  State Snapshot (Agent 0): Yaw:319.1, Vel:0.47, AngTarg:138.9, DistTarg:6.6, DistN1:6.3, AlignN1:0.75, MinObs:0.6
+[2025-11-21 17:10:37] Episode: 63, Steps: 280, Total Reward: -28648.41, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.7, Vel:0.14, AngTarg:168.8, DistTarg:11.9, DistN1:1.8, AlignN1:1.00, MinObs:4.5
+[2025-11-21 17:10:42] Episode: 64, Steps: 242, Total Reward: -14004.80, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.0, Vel:0.05, AngTarg:165.5, DistTarg:9.8, DistN1:1.7, AlignN1:1.00, MinObs:2.5
+[2025-11-21 17:10:47] Episode: 65, Steps: 239, Total Reward: -10347.54, Status: All Collided
+  State Snapshot (Agent 0): Yaw:314.7, Vel:1.80, AngTarg:-166.0, DistTarg:9.4, DistN1:0.6, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:10:52] Episode: 66, Steps: 280, Total Reward: -19886.01, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.3, Vel:0.69, AngTarg:146.6, DistTarg:8.9, DistN1:0.9, AlignN1:1.00, MinObs:0.8
+[2025-11-21 17:10:58] Episode: 67, Steps: 270, Total Reward: -35464.05, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.3, Vel:0.02, AngTarg:161.2, DistTarg:12.5, DistN1:1.6, AlignN1:1.00, MinObs:5.0
+[2025-11-21 17:11:05] Episode: 68, Steps: 356, Total Reward: -32360.04, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.6, Vel:0.21, AngTarg:148.1, DistTarg:8.4, DistN1:1.3, AlignN1:1.00, MinObs:1.4
+[2025-11-21 17:11:13] Episode: 69, Steps: 391, Total Reward: -35851.18, Status: All Collided
+  State Snapshot (Agent 0): Yaw:323.1, Vel:3.15, AngTarg:147.6, DistTarg:6.9, DistN1:6.0, AlignN1:0.76, MinObs:0.3
+[2025-11-21 17:11:21] Episode: 70, Steps: 398, Total Reward: -36391.47, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.7, Vel:0.68, AngTarg:162.0, DistTarg:12.3, DistN1:0.6, AlignN1:0.77, MinObs:0.3
+[2025-11-21 17:11:31] Episode: 71, Steps: 500, Total Reward: -35139.52, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.2, Vel:0.00, AngTarg:169.4, DistTarg:11.3, DistN1:0.6, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:11:33] Episode: 72, Steps: 107, Total Reward: -12887.85, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.6, Vel:0.26, AngTarg:164.9, DistTarg:15.1, DistN1:0.4, AlignN1:-0.64, MinObs:0.2
+[2025-11-21 17:11:36] Episode: 73, Steps: 184, Total Reward: -18285.58, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.2, Vel:0.66, AngTarg:165.6, DistTarg:13.6, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:11:46] Episode: 74, Steps: 500, Total Reward: -15455.39, Status: Timeout
+  State Snapshot (Agent 0): Yaw:357.9, Vel:0.01, AngTarg:169.4, DistTarg:13.4, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:11:56] Episode: 75, Steps: 500, Total Reward: -46191.11, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.5, Vel:0.01, AngTarg:172.7, DistTarg:6.0, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:12:00] Episode: 76, Steps: 172, Total Reward: -20201.71, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.3, Vel:0.10, AngTarg:162.1, DistTarg:13.5, DistN1:0.4, AlignN1:0.73, MinObs:0.3
+[2025-11-21 17:12:04] Episode: 77, Steps: 214, Total Reward: -5818.94, Status: All Collided
+  State Snapshot (Agent 0): Yaw:352.3, Vel:0.51, AngTarg:174.4, DistTarg:12.5, DistN1:0.5, AlignN1:0.58, MinObs:0.2
+[2025-11-21 17:12:17] Episode: 78, Steps: 147, Total Reward: -16032.03, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.4, Vel:0.34, AngTarg:166.5, DistTarg:14.9, DistN1:0.4, AlignN1:0.00, MinObs:0.1
+[2025-11-21 17:12:26] Episode: 79, Steps: 461, Total Reward: -50255.34, Status: All Collided
+  State Snapshot (Agent 0): Yaw:8.0, Vel:0.37, AngTarg:159.2, DistTarg:15.0, DistN1:0.3, AlignN1:0.88, MinObs:0.2
+[2025-11-21 17:12:36] Episode: 80, Steps: 500, Total Reward: -53922.71, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.8, Vel:0.13, AngTarg:113.3, DistTarg:6.4, DistN1:6.9, AlignN1:0.70, MinObs:0.9
+[2025-11-21 17:12:38] Episode: 81, Steps: 104, Total Reward: -8530.03, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.4, Vel:0.90, AngTarg:163.6, DistTarg:14.0, DistN1:0.7, AlignN1:0.99, MinObs:0.7
+[2025-11-21 17:12:48] Episode: 82, Steps: 500, Total Reward: -35011.31, Status: Timeout
+  State Snapshot (Agent 0): Yaw:358.6, Vel:0.06, AngTarg:168.0, DistTarg:15.5, DistN1:2.6, AlignN1:1.00, MinObs:2.6
+[2025-11-21 17:12:50] Episode: 83, Steps: 108, Total Reward: -11174.34, Status: All Collided
+  State Snapshot (Agent 0): Yaw:355.2, Vel:0.54, AngTarg:171.6, DistTarg:13.6, DistN1:0.8, AlignN1:1.00, MinObs:6.1
+[2025-11-21 17:13:00] Episode: 84, Steps: 500, Total Reward: -66505.98, Status: Timeout
+  State Snapshot (Agent 0): Yaw:4.2, Vel:0.05, AngTarg:168.6, DistTarg:7.2, DistN1:1.4, AlignN1:1.00, MinObs:1.0
+[2025-11-21 17:13:02] Episode: 85, Steps: 68, Total Reward: -6627.25, Status: All Collided
+  State Snapshot (Agent 0): Yaw:5.1, Vel:1.87, AngTarg:162.4, DistTarg:15.2, DistN1:0.4, AlignN1:0.94, MinObs:0.2
+[2025-11-21 17:13:11] Episode: 86, Steps: 494, Total Reward: -36331.76, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.2, Vel:0.28, AngTarg:164.5, DistTarg:8.5, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:13:21] Episode: 87, Steps: 469, Total Reward: -66054.23, Status: All Collided
+  State Snapshot (Agent 0): Yaw:5.0, Vel:0.04, AngTarg:167.1, DistTarg:7.9, DistN1:1.8, AlignN1:1.00, MinObs:1.2
+[2025-11-21 17:13:31] Episode: 88, Steps: 498, Total Reward: -44079.71, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.0, Vel:0.15, AngTarg:166.2, DistTarg:5.9, DistN1:1.0, AlignN1:1.00, MinObs:0.8
+[2025-11-21 17:13:35] Episode: 89, Steps: 201, Total Reward: -26981.47, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.4, Vel:0.03, AngTarg:161.1, DistTarg:15.7, DistN1:1.2, AlignN1:1.00, MinObs:1.0
+[2025-11-21 17:13:38] Episode: 90, Steps: 161, Total Reward: -23518.38, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.6, Vel:1.03, AngTarg:170.0, DistTarg:15.6, DistN1:0.5, AlignN1:1.00, MinObs:0.2
+[2025-11-21 17:13:45] Episode: 91, Steps: 344, Total Reward: -30440.91, Status: All Collided
+  State Snapshot (Agent 0): Yaw:356.7, Vel:0.02, AngTarg:167.9, DistTarg:13.6, DistN1:0.5, AlignN1:0.99, MinObs:0.4
+[2025-11-21 17:13:52] Episode: 92, Steps: 367, Total Reward: -15121.94, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.2, Vel:1.01, AngTarg:150.6, DistTarg:14.1, DistN1:0.6, AlignN1:1.00, MinObs:0.5
+[2025-11-21 17:13:55] Episode: 93, Steps: 159, Total Reward: -23031.79, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.01, AngTarg:168.2, DistTarg:15.7, DistN1:0.6, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:14:02] Episode: 94, Steps: 346, Total Reward: -24354.93, Status: All Collided
+  State Snapshot (Agent 0): Yaw:356.5, Vel:0.89, AngTarg:153.7, DistTarg:15.6, DistN1:0.5, AlignN1:-0.06, MinObs:0.9
+[2025-11-21 17:14:11] Episode: 95, Steps: 421, Total Reward: -25928.37, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.6, Vel:0.08, AngTarg:154.9, DistTarg:13.2, DistN1:1.5, AlignN1:1.00, MinObs:1.2
+[2025-11-21 17:14:21] Episode: 96, Steps: 500, Total Reward: -66077.46, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.01, AngTarg:158.3, DistTarg:7.5, DistN1:1.2, AlignN1:1.00, MinObs:0.2
+[2025-11-21 17:14:23] Episode: 97, Steps: 134, Total Reward: -7477.85, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.4, Vel:1.80, AngTarg:166.1, DistTarg:15.3, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:14:29] Episode: 98, Steps: 277, Total Reward: -12980.55, Status: All Collided
+  State Snapshot (Agent 0): Yaw:353.9, Vel:2.14, AngTarg:171.1, DistTarg:14.5, DistN1:0.5, AlignN1:0.98, MinObs:0.3
+[2025-11-21 17:14:39] Episode: 99, Steps: 500, Total Reward: -57732.86, Status: Timeout
+  State Snapshot (Agent 0): Yaw:358.9, Vel:0.01, AngTarg:170.1, DistTarg:14.6, DistN1:0.3, AlignN1:1.00, MinObs:0.1
+[2025-11-21 17:14:44] Episode: 100, Steps: 241, Total Reward: -28649.29, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.9, Vel:0.08, AngTarg:159.6, DistTarg:15.2, DistN1:0.5, AlignN1:0.79, MinObs:0.2
+[2025-11-21 17:14:53] Episode: 101, Steps: 447, Total Reward: -38990.08, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.6, Vel:0.19, AngTarg:168.4, DistTarg:13.3, DistN1:0.5, AlignN1:0.69, MinObs:0.3
+[2025-11-21 17:15:03] Episode: 102, Steps: 500, Total Reward: -86832.84, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.4, Vel:0.00, AngTarg:168.2, DistTarg:16.8, DistN1:0.9, AlignN1:1.00, MinObs:0.6
+[2025-11-21 17:15:13] Episode: 103, Steps: 500, Total Reward: -19183.84, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.2, Vel:0.17, AngTarg:153.3, DistTarg:16.6, DistN1:9.8, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:15:23] Episode: 104, Steps: 500, Total Reward: -35242.44, Status: Timeout
+  State Snapshot (Agent 0): Yaw:350.6, Vel:1.56, AngTarg:166.7, DistTarg:15.6, DistN1:7.0, AlignN1:0.98, MinObs:3.0
+[2025-11-21 17:15:33] Episode: 105, Steps: 500, Total Reward: -64231.10, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.2, Vel:0.02, AngTarg:158.1, DistTarg:11.0, DistN1:0.8, AlignN1:1.00, MinObs:0.7
+[2025-11-21 17:15:43] Episode: 106, Steps: 491, Total Reward: -41940.78, Status: All Collided
+  State Snapshot (Agent 0): Yaw:352.0, Vel:0.31, AngTarg:128.6, DistTarg:7.5, DistN1:1.3, AlignN1:0.99, MinObs:1.1
+[2025-11-21 17:15:50] Episode: 107, Steps: 367, Total Reward: -41939.35, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.1, Vel:0.40, AngTarg:152.8, DistTarg:8.6, DistN1:3.3, AlignN1:1.00, MinObs:1.9
+[2025-11-21 17:15:53] Episode: 108, Steps: 156, Total Reward: -13602.57, Status: All Collided
+  State Snapshot (Agent 0): Yaw:318.8, Vel:1.72, AngTarg:-161.8, DistTarg:7.4, DistN1:6.7, AlignN1:0.71, MinObs:0.3
+[2025-11-21 17:15:57] Episode: 109, Steps: 210, Total Reward: -11140.45, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.7, Vel:0.54, AngTarg:154.3, DistTarg:7.3, DistN1:3.5, AlignN1:1.00, MinObs:0.6
+[2025-11-21 17:16:07] Episode: 110, Steps: 500, Total Reward: -71737.58, Status: Timeout
+  State Snapshot (Agent 0): Yaw:357.4, Vel:0.07, AngTarg:172.5, DistTarg:9.1, DistN1:0.9, AlignN1:1.00, MinObs:0.7
+[2025-11-21 17:16:13] Episode: 111, Steps: 303, Total Reward: -25019.62, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.9, Vel:0.11, AngTarg:157.5, DistTarg:7.8, DistN1:0.8, AlignN1:1.00, MinObs:0.6
+[2025-11-21 17:16:17] Episode: 112, Steps: 175, Total Reward: -24978.63, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.4, Vel:1.72, AngTarg:160.0, DistTarg:7.9, DistN1:7.2, AlignN1:0.99, MinObs:0.9
+[2025-11-21 17:16:20] Episode: 113, Steps: 182, Total Reward: -19574.77, Status: All Collided
+  State Snapshot (Agent 0): Yaw:313.4, Vel:1.37, AngTarg:-154.4, DistTarg:7.9, DistN1:5.7, AlignN1:0.64, MinObs:0.6
+[2025-11-21 17:16:26] Episode: 114, Steps: 280, Total Reward: -15781.01, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.4, Vel:0.95, AngTarg:151.0, DistTarg:8.3, DistN1:1.1, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:16:30] Episode: 115, Steps: 212, Total Reward: -25659.14, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.16, AngTarg:164.2, DistTarg:7.8, DistN1:6.5, AlignN1:1.00, MinObs:0.7
+[2025-11-21 17:16:36] Episode: 116, Steps: 281, Total Reward: -4348.35, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.8, Vel:0.04, AngTarg:162.0, DistTarg:11.8, DistN1:0.4, AlignN1:0.73, MinObs:0.2
+[2025-11-21 17:16:40] Episode: 117, Steps: 223, Total Reward: -34697.28, Status: All Collided
+  State Snapshot (Agent 0): Yaw:321.5, Vel:1.21, AngTarg:-166.9, DistTarg:7.5, DistN1:7.3, AlignN1:0.81, MinObs:0.5
+[2025-11-21 17:16:50] Episode: 118, Steps: 493, Total Reward: -55380.82, Status: All Collided
+  State Snapshot (Agent 0): Yaw:352.4, Vel:1.87, AngTarg:142.3, DistTarg:11.6, DistN1:4.2, AlignN1:0.80, MinObs:0.9
+[2025-11-21 17:16:51] Episode: 119, Steps: 66, Total Reward: -4869.78, Status: All Collided
+  State Snapshot (Agent 0): Yaw:312.5, Vel:1.95, AngTarg:-145.7, DistTarg:16.0, DistN1:0.5, AlignN1:0.63, MinObs:0.3
+[2025-11-21 17:16:56] Episode: 120, Steps: 219, Total Reward: -29982.83, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.6, Vel:0.65, AngTarg:164.3, DistTarg:7.3, DistN1:6.1, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:16:57] Episode: 121, Steps: 66, Total Reward: -4533.78, Status: All Collided
+  State Snapshot (Agent 0): Yaw:356.9, Vel:1.76, AngTarg:170.4, DistTarg:14.8, DistN1:0.4, AlignN1:0.14, MinObs:0.2
+[2025-11-21 17:17:02] Episode: 122, Steps: 227, Total Reward: -26724.42, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.1, Vel:0.90, AngTarg:166.0, DistTarg:7.5, DistN1:7.5, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:17:06] Episode: 123, Steps: 225, Total Reward: -29198.82, Status: All Collided
+  State Snapshot (Agent 0): Yaw:4.9, Vel:1.11, AngTarg:163.4, DistTarg:7.2, DistN1:5.9, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:17:11] Episode: 124, Steps: 252, Total Reward: -17159.59, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.1, Vel:0.50, AngTarg:152.3, DistTarg:8.2, DistN1:3.5, AlignN1:-0.04, MinObs:1.0
+[2025-11-21 17:17:15] Episode: 125, Steps: 204, Total Reward: -15839.82, Status: All Collided
+  State Snapshot (Agent 0): Yaw:309.6, Vel:1.46, AngTarg:-152.1, DistTarg:7.8, DistN1:5.3, AlignN1:0.59, MinObs:0.6
+[2025-11-21 17:17:20] Episode: 126, Steps: 217, Total Reward: -9125.26, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.5, Vel:0.77, AngTarg:152.0, DistTarg:16.3, DistN1:7.1, AlignN1:1.00, MinObs:0.6
+[2025-11-21 17:17:23] Episode: 127, Steps: 166, Total Reward: -13990.20, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.3, Vel:0.94, AngTarg:165.4, DistTarg:7.3, DistN1:6.2, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:17:32] Episode: 128, Steps: 448, Total Reward: -52475.38, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.0, Vel:0.44, AngTarg:134.2, DistTarg:6.8, DistN1:4.0, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:17:37] Episode: 129, Steps: 238, Total Reward: -8985.74, Status: All Collided
+  State Snapshot (Agent 0): Yaw:344.1, Vel:0.90, AngTarg:165.0, DistTarg:8.1, DistN1:4.0, AlignN1:0.87, MinObs:0.4
+[2025-11-21 17:17:40] Episode: 130, Steps: 177, Total Reward: -11199.53, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.4, Vel:3.41, AngTarg:168.9, DistTarg:7.1, DistN1:2.0, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:17:42] Episode: 131, Steps: 73, Total Reward: -3283.20, Status: All Collided
+  State Snapshot (Agent 0): Yaw:11.1, Vel:3.70, AngTarg:155.7, DistTarg:14.5, DistN1:0.5, AlignN1:0.94, MinObs:0.3
+[2025-11-21 17:17:48] Episode: 132, Steps: 319, Total Reward: -34082.17, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.6, Vel:0.06, AngTarg:164.5, DistTarg:12.8, DistN1:0.6, AlignN1:0.13, MinObs:0.4
+[2025-11-21 17:17:53] Episode: 133, Steps: 253, Total Reward: -16841.93, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.3, Vel:0.37, AngTarg:164.2, DistTarg:7.6, DistN1:1.3, AlignN1:0.88, MinObs:0.3
+[2025-11-21 17:17:57] Episode: 134, Steps: 207, Total Reward: -25321.11, Status: All Collided
+  State Snapshot (Agent 0): Yaw:315.2, Vel:2.50, AngTarg:-158.2, DistTarg:7.6, DistN1:6.3, AlignN1:0.69, MinObs:0.3
+[2025-11-21 17:18:03] Episode: 135, Steps: 265, Total Reward: -23793.20, Status: All Collided
+  State Snapshot (Agent 0): Yaw:272.1, Vel:1.07, AngTarg:-121.1, DistTarg:16.2, DistN1:6.6, AlignN1:0.11, MinObs:0.5
+[2025-11-21 17:18:05] Episode: 136, Steps: 105, Total Reward: -5849.74, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.9, Vel:1.34, AngTarg:167.2, DistTarg:12.7, DistN1:0.6, AlignN1:1.00, MinObs:0.5
+[2025-11-21 17:18:10] Episode: 137, Steps: 253, Total Reward: -41923.02, Status: All Collided
+  State Snapshot (Agent 0): Yaw:350.3, Vel:1.65, AngTarg:159.8, DistTarg:8.0, DistN1:6.4, AlignN1:0.99, MinObs:0.3
+[2025-11-21 17:18:20] Episode: 138, Steps: 500, Total Reward: -68503.36, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.8, Vel:0.27, AngTarg:171.5, DistTarg:6.8, DistN1:2.2, AlignN1:1.00, MinObs:1.4
+[2025-11-21 17:18:30] Episode: 139, Steps: 500, Total Reward: -72232.42, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.8, Vel:0.24, AngTarg:156.2, DistTarg:9.3, DistN1:1.2, AlignN1:0.99, MinObs:2.7
+[2025-11-21 17:18:35] Episode: 140, Steps: 259, Total Reward: -13581.02, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.5, Vel:0.53, AngTarg:153.9, DistTarg:8.3, DistN1:1.8, AlignN1:0.73, MinObs:0.8
+[2025-11-21 17:18:45] Episode: 141, Steps: 500, Total Reward: -75305.78, Status: Timeout
+  State Snapshot (Agent 0): Yaw:45.0, Vel:0.90, AngTarg:95.1, DistTarg:10.4, DistN1:7.3, AlignN1:0.69, MinObs:2.3
+[2025-11-21 17:18:55] Episode: 142, Steps: 500, Total Reward: -44678.85, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.3, Vel:0.08, AngTarg:151.3, DistTarg:8.6, DistN1:1.6, AlignN1:1.00, MinObs:1.7
+[2025-11-21 17:19:02] Episode: 143, Steps: 360, Total Reward: -22985.77, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.2, Vel:0.39, AngTarg:144.6, DistTarg:8.4, DistN1:1.1, AlignN1:1.00, MinObs:0.7
+[2025-11-21 17:19:09] Episode: 144, Steps: 339, Total Reward: -35648.18, Status: All Collided
+  State Snapshot (Agent 0): Yaw:314.5, Vel:0.84, AngTarg:175.8, DistTarg:8.1, DistN1:8.3, AlignN1:0.71, MinObs:0.3
+[2025-11-21 17:19:19] Episode: 145, Steps: 500, Total Reward: -71217.31, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.6, Vel:0.08, AngTarg:145.3, DistTarg:9.0, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:19:27] Episode: 146, Steps: 407, Total Reward: -40824.55, Status: All Collided
+  State Snapshot (Agent 0): Yaw:338.8, Vel:2.13, AngTarg:150.8, DistTarg:8.1, DistN1:8.1, AlignN1:0.93, MinObs:0.3
+[2025-11-21 17:19:37] Episode: 147, Steps: 500, Total Reward: -80589.21, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.74, AngTarg:140.7, DistTarg:10.5, DistN1:7.3, AlignN1:1.00, MinObs:2.1
+[2025-11-21 17:19:45] Episode: 148, Steps: 379, Total Reward: -42112.91, Status: All Collided
+  State Snapshot (Agent 0): Yaw:281.0, Vel:1.00, AngTarg:-139.2, DistTarg:12.4, DistN1:4.2, AlignN1:0.21, MinObs:0.8
+[2025-11-21 17:19:48] Episode: 149, Steps: 171, Total Reward: -18839.10, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.4, Vel:0.43, AngTarg:167.0, DistTarg:14.7, DistN1:0.6, AlignN1:0.74, MinObs:0.3
+[2025-11-21 17:19:50] Episode: 150, Steps: 120, Total Reward: -8732.71, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.37, AngTarg:165.8, DistTarg:13.9, DistN1:0.5, AlignN1:0.64, MinObs:0.3
+[2025-11-21 17:19:57] Episode: 151, Steps: 312, Total Reward: -23727.35, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.09, AngTarg:133.0, DistTarg:7.7, DistN1:2.8, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:20:03] Episode: 152, Steps: 320, Total Reward: -40723.92, Status: All Collided
+  State Snapshot (Agent 0): Yaw:327.4, Vel:1.00, AngTarg:162.3, DistTarg:8.1, DistN1:8.9, AlignN1:0.80, MinObs:2.3
+[2025-11-21 17:20:13] Episode: 153, Steps: 500, Total Reward: -46265.30, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.51, AngTarg:138.5, DistTarg:9.8, DistN1:4.5, AlignN1:1.00, MinObs:2.7
+[2025-11-21 17:20:20] Episode: 154, Steps: 341, Total Reward: -27364.94, Status: All Collided
+  State Snapshot (Agent 0): Yaw:270.4, Vel:0.48, AngTarg:-133.0, DistTarg:11.9, DistN1:4.0, AlignN1:-0.02, MinObs:0.7
+[2025-11-21 17:20:22] Episode: 155, Steps: 96, Total Reward: -8176.56, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.3, Vel:1.78, AngTarg:168.9, DistTarg:14.2, DistN1:0.5, AlignN1:0.70, MinObs:0.3
+[2025-11-21 17:20:23] Episode: 156, Steps: 62, Total Reward: -4034.70, Status: All Collided
+  State Snapshot (Agent 0): Yaw:356.2, Vel:2.42, AngTarg:170.5, DistTarg:15.4, DistN1:0.5, AlignN1:0.62, MinObs:0.3
+[2025-11-21 17:20:33] Episode: 157, Steps: 500, Total Reward: -67758.07, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.07, AngTarg:166.0, DistTarg:13.8, DistN1:0.6, AlignN1:1.00, MinObs:0.5
+[2025-11-21 17:20:43] Episode: 158, Steps: 477, Total Reward: -61372.26, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.2, Vel:0.08, AngTarg:164.7, DistTarg:14.4, DistN1:1.4, AlignN1:1.00, MinObs:4.1
+[2025-11-21 17:20:47] Episode: 159, Steps: 224, Total Reward: -32754.43, Status: All Collided
+  State Snapshot (Agent 0): Yaw:328.2, Vel:0.18, AngTarg:-161.9, DistTarg:13.9, DistN1:0.4, AlignN1:0.87, MinObs:0.2
+[2025-11-21 17:20:48] Episode: 160, Steps: 62, Total Reward: -3544.93, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.4, Vel:1.96, AngTarg:165.7, DistTarg:14.9, DistN1:0.5, AlignN1:0.98, MinObs:0.4
+[2025-11-21 17:20:50] Episode: 161, Steps: 69, Total Reward: -3815.17, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.3, Vel:2.77, AngTarg:163.9, DistTarg:15.3, DistN1:0.6, AlignN1:0.76, MinObs:0.4
+[2025-11-21 17:20:51] Episode: 162, Steps: 50, Total Reward: -3445.50, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.8, Vel:2.77, AngTarg:168.7, DistTarg:15.9, DistN1:0.4, AlignN1:0.99, MinObs:0.3
+[2025-11-21 17:20:52] Episode: 163, Steps: 79, Total Reward: -5905.25, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.0, Vel:1.68, AngTarg:169.5, DistTarg:15.6, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:20:53] Episode: 164, Steps: 52, Total Reward: -3909.11, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.2, Vel:1.60, AngTarg:170.1, DistTarg:16.0, DistN1:0.6, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:21:03] Episode: 165, Steps: 492, Total Reward: -98311.78, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.75, AngTarg:149.6, DistTarg:16.2, DistN1:3.6, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:21:06] Episode: 166, Steps: 150, Total Reward: -13786.69, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.2, Vel:0.40, AngTarg:164.0, DistTarg:12.9, DistN1:0.5, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:21:16] Episode: 167, Steps: 500, Total Reward: -45798.37, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.01, AngTarg:164.3, DistTarg:8.8, DistN1:3.0, AlignN1:1.00, MinObs:1.4
+[2025-11-21 17:21:18] Episode: 168, Steps: 76, Total Reward: -6344.10, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.5, Vel:0.42, AngTarg:164.8, DistTarg:15.5, DistN1:0.7, AlignN1:1.00, MinObs:0.5
+[2025-11-21 17:21:19] Episode: 169, Steps: 66, Total Reward: -4471.15, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.0, Vel:1.15, AngTarg:169.9, DistTarg:15.6, DistN1:0.6, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:21:29] Episode: 170, Steps: 500, Total Reward: -59989.58, Status: Timeout
+  State Snapshot (Agent 0): Yaw:326.7, Vel:1.38, AngTarg:-170.4, DistTarg:13.2, DistN1:2.5, AlignN1:0.86, MinObs:3.7
+[2025-11-21 17:21:31] Episode: 171, Steps: 100, Total Reward: -9352.51, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.3, Vel:0.57, AngTarg:169.4, DistTarg:15.2, DistN1:0.5, AlignN1:0.67, MinObs:0.3
+[2025-11-21 17:21:34] Episode: 172, Steps: 160, Total Reward: -12643.58, Status: All Collided
+  State Snapshot (Agent 0): Yaw:315.3, Vel:0.27, AngTarg:-153.5, DistTarg:13.4, DistN1:0.5, AlignN1:0.71, MinObs:0.3
+[2025-11-21 17:21:44] Episode: 173, Steps: 500, Total Reward: -63866.08, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.44, AngTarg:142.0, DistTarg:10.6, DistN1:6.8, AlignN1:1.00, MinObs:2.1
+[2025-11-21 17:21:54] Episode: 174, Steps: 500, Total Reward: -78662.82, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.48, AngTarg:157.9, DistTarg:12.8, DistN1:2.6, AlignN1:1.00, MinObs:3.3
+[2025-11-21 17:21:56] Episode: 175, Steps: 99, Total Reward: -7195.41, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.3, Vel:0.86, AngTarg:167.6, DistTarg:14.4, DistN1:0.6, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:22:03] Episode: 176, Steps: 322, Total Reward: -34926.45, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.6, Vel:0.00, AngTarg:170.4, DistTarg:14.8, DistN1:0.8, AlignN1:1.00, MinObs:0.7
+[2025-11-21 17:22:05] Episode: 177, Steps: 96, Total Reward: -10540.31, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.3, Vel:1.16, AngTarg:167.2, DistTarg:15.1, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:22:07] Episode: 178, Steps: 105, Total Reward: -9078.10, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.8, Vel:2.29, AngTarg:169.5, DistTarg:14.3, DistN1:0.5, AlignN1:0.68, MinObs:0.4
+[2025-11-21 17:22:15] Episode: 179, Steps: 425, Total Reward: -62152.18, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.5, Vel:1.10, AngTarg:156.1, DistTarg:7.6, DistN1:8.1, AlignN1:1.00, MinObs:0.6
+[2025-11-21 17:22:21] Episode: 180, Steps: 289, Total Reward: -36368.90, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.6, Vel:0.60, AngTarg:165.4, DistTarg:7.3, DistN1:6.8, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:22:30] Episode: 181, Steps: 442, Total Reward: -25134.85, Status: All Collided
+  State Snapshot (Agent 0): Yaw:321.1, Vel:1.64, AngTarg:-176.0, DistTarg:4.6, DistN1:8.3, AlignN1:0.80, MinObs:0.7
+[2025-11-21 17:42:02] Episode: 182, Steps: 500, Total Reward: -67258.38, Status: Timeout
+  State Snapshot (Agent 0): Yaw:45.0, Vel:1.75, AngTarg:136.3, DistTarg:5.2, DistN1:9.5, AlignN1:0.66, MinObs:2.9
+[2025-11-21 17:42:03] Episode: 183, Steps: 69, Total Reward: -6025.42, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.7, Vel:1.80, AngTarg:171.0, DistTarg:15.0, DistN1:0.9, AlignN1:1.00, MinObs:6.1
+[2025-11-21 17:42:05] Episode: 184, Steps: 81, Total Reward: -6568.14, Status: All Collided
+  State Snapshot (Agent 0): Yaw:356.7, Vel:1.25, AngTarg:169.8, DistTarg:15.1, DistN1:0.8, AlignN1:1.00, MinObs:0.7
+[2025-11-21 17:42:10] Episode: 185, Steps: 241, Total Reward: -37602.91, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.82, AngTarg:167.1, DistTarg:7.4, DistN1:7.9, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:42:18] Episode: 186, Steps: 412, Total Reward: -41433.56, Status: All Collided
+  State Snapshot (Agent 0): Yaw:326.7, Vel:1.31, AngTarg:-160.0, DistTarg:6.1, DistN1:8.3, AlignN1:0.83, MinObs:0.7
+[2025-11-21 17:42:19] Episode: 187, Steps: 74, Total Reward: -7659.25, Status: All Collided
+  State Snapshot (Agent 0): Yaw:354.9, Vel:1.38, AngTarg:171.6, DistTarg:14.7, DistN1:0.7, AlignN1:0.99, MinObs:0.8
+[2025-11-21 17:42:29] Episode: 188, Steps: 500, Total Reward: -51495.17, Status: Timeout
+  State Snapshot (Agent 0): Yaw:1.1, Vel:0.00, AngTarg:160.0, DistTarg:13.3, DistN1:1.3, AlignN1:1.00, MinObs:4.3
+[2025-11-21 17:42:34] Episode: 189, Steps: 223, Total Reward: -26180.43, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.8, Vel:1.58, AngTarg:159.6, DistTarg:7.9, DistN1:6.7, AlignN1:0.99, MinObs:0.6
+[2025-11-21 17:42:36] Episode: 190, Steps: 95, Total Reward: -5214.54, Status: All Collided
+  State Snapshot (Agent 0): Yaw:32.1, Vel:0.63, AngTarg:132.6, DistTarg:15.4, DistN1:0.4, AlignN1:0.88, MinObs:0.2
+[2025-11-21 17:42:38] Episode: 191, Steps: 113, Total Reward: -6425.55, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.77, AngTarg:168.9, DistTarg:12.6, DistN1:0.5, AlignN1:0.98, MinObs:0.4
+[2025-11-21 17:42:44] Episode: 192, Steps: 273, Total Reward: -16931.13, Status: All Collided
+  State Snapshot (Agent 0): Yaw:355.9, Vel:0.01, AngTarg:172.5, DistTarg:12.3, DistN1:1.6, AlignN1:1.00, MinObs:5.3
+[2025-11-21 17:42:52] Episode: 193, Steps: 419, Total Reward: -33312.10, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:337.1, Vel:0.92, AngTarg:-160.3, DistTarg:2.0, DistN1:11.5, AlignN1:0.94, MinObs:0.3
+[2025-11-21 17:42:54] Episode: 194, Steps: 99, Total Reward: -6256.90, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.7, Vel:0.82, AngTarg:166.6, DistTarg:13.8, DistN1:0.5, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:42:59] Episode: 195, Steps: 270, Total Reward: -29420.62, Status: All Collided
+  State Snapshot (Agent 0): Yaw:356.3, Vel:0.03, AngTarg:170.4, DistTarg:13.4, DistN1:0.8, AlignN1:0.67, MinObs:0.9
+[2025-11-21 17:43:07] Episode: 196, Steps: 367, Total Reward: -35572.24, Status: All Collided
+  State Snapshot (Agent 0): Yaw:44.3, Vel:0.94, AngTarg:84.3, DistTarg:8.0, DistN1:3.8, AlignN1:0.70, MinObs:0.3
+[2025-11-21 17:43:17] Episode: 197, Steps: 500, Total Reward: -68288.04, Status: Timeout
+  State Snapshot (Agent 0): Yaw:315.0, Vel:1.33, AngTarg:-141.9, DistTarg:10.1, DistN1:4.8, AlignN1:0.72, MinObs:4.4
+[2025-11-21 17:43:27] Episode: 198, Steps: 500, Total Reward: -36707.20, Status: Timeout
+  State Snapshot (Agent 0): Yaw:21.8, Vel:2.17, AngTarg:-169.5, DistTarg:5.2, DistN1:10.1, AlignN1:0.92, MinObs:3.0
+[2025-11-21 17:43:36] Episode: 199, Steps: 492, Total Reward: -33209.73, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.7, Vel:0.02, AngTarg:164.5, DistTarg:13.8, DistN1:1.3, AlignN1:1.00, MinObs:1.1
+[2025-11-21 17:43:46] Episode: 200, Steps: 491, Total Reward: -59954.60, Status: All Collided
+  State Snapshot (Agent 0): Yaw:354.3, Vel:0.16, AngTarg:179.6, DistTarg:13.7, DistN1:2.8, AlignN1:1.00, MinObs:7.4
+[2025-11-21 17:43:48] Episode: 201, Steps: 89, Total Reward: -7167.98, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.4, Vel:0.57, AngTarg:167.4, DistTarg:14.5, DistN1:0.5, AlignN1:0.70, MinObs:0.3
+[2025-11-21 17:43:58] Episode: 202, Steps: 475, Total Reward: -89888.05, Status: All Collided
+  State Snapshot (Agent 0): Yaw:31.6, Vel:0.21, AngTarg:131.2, DistTarg:15.0, DistN1:0.6, AlignN1:0.88, MinObs:0.4
+[2025-11-21 17:44:08] Episode: 203, Steps: 500, Total Reward: -31680.99, Status: Timeout
+  State Snapshot (Agent 0): Yaw:5.5, Vel:0.21, AngTarg:154.3, DistTarg:21.4, DistN1:7.8, AlignN1:0.99, MinObs:0.8
+[2025-11-21 17:44:13] Episode: 204, Steps: 293, Total Reward: -32993.59, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.1, Vel:0.16, AngTarg:164.8, DistTarg:15.1, DistN1:3.1, AlignN1:1.00, MinObs:5.0
+[2025-11-21 17:44:15] Episode: 205, Steps: 87, Total Reward: -6404.17, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.3, Vel:1.33, AngTarg:171.0, DistTarg:14.5, DistN1:0.6, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:44:25] Episode: 206, Steps: 500, Total Reward: -81074.14, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.56, AngTarg:171.5, DistTarg:10.4, DistN1:5.4, AlignN1:1.00, MinObs:6.8
+[2025-11-21 17:44:35] Episode: 207, Steps: 500, Total Reward: -46308.48, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:3.00, AngTarg:167.6, DistTarg:20.7, DistN1:8.6, AlignN1:1.00, MinObs:3.7
+[2025-11-21 17:44:45] Episode: 208, Steps: 500, Total Reward: -40184.32, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.22, AngTarg:-167.8, DistTarg:7.4, DistN1:7.8, AlignN1:1.00, MinObs:3.5
+[2025-11-21 17:44:55] Episode: 209, Steps: 500, Total Reward: -91177.93, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.36, AngTarg:178.8, DistTarg:13.7, DistN1:4.2, AlignN1:1.00, MinObs:5.7
+[2025-11-21 17:45:05] Episode: 210, Steps: 500, Total Reward: -56275.08, Status: Timeout
+  State Snapshot (Agent 0): Yaw:17.3, Vel:0.55, AngTarg:172.9, DistTarg:7.7, DistN1:4.5, AlignN1:0.97, MinObs:5.1
+[2025-11-21 17:45:07] Episode: 211, Steps: 79, Total Reward: -4003.20, Status: All Collided
+  State Snapshot (Agent 0): Yaw:352.8, Vel:2.45, AngTarg:176.1, DistTarg:13.5, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:45:08] Episode: 212, Steps: 78, Total Reward: -4020.29, Status: All Collided
+  State Snapshot (Agent 0): Yaw:33.5, Vel:3.02, AngTarg:132.7, DistTarg:15.2, DistN1:0.4, AlignN1:0.69, MinObs:0.3
+[2025-11-21 17:45:43] Episode: 213, Steps: 500, Total Reward: -61631.03, Status: Timeout
+  State Snapshot (Agent 0): Yaw:43.8, Vel:0.25, AngTarg:143.4, DistTarg:10.5, DistN1:5.3, AlignN1:0.70, MinObs:4.7
+[2025-11-21 17:45:53] Episode: 214, Steps: 500, Total Reward: -45074.18, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:3.81, AngTarg:176.5, DistTarg:10.8, DistN1:5.2, AlignN1:1.00, MinObs:7.8
+[2025-11-21 17:46:03] Episode: 215, Steps: 500, Total Reward: -45803.75, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.28, AngTarg:-179.6, DistTarg:13.2, DistN1:3.3, AlignN1:1.00, MinObs:10.4
+[2025-11-21 17:46:05] Episode: 216, Steps: 71, Total Reward: -4913.19, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.5, Vel:2.60, AngTarg:166.1, DistTarg:13.8, DistN1:0.9, AlignN1:0.99, MinObs:0.6
+[2025-11-21 17:46:10] Episode: 217, Steps: 272, Total Reward: -15444.08, Status: All Collided
+  State Snapshot (Agent 0): Yaw:4.0, Vel:0.35, AngTarg:145.6, DistTarg:14.5, DistN1:7.8, AlignN1:0.98, MinObs:1.4
+[2025-11-21 17:46:17] Episode: 218, Steps: 322, Total Reward: -58585.06, Status: All Collided
+  State Snapshot (Agent 0): Yaw:360.0, Vel:0.03, AngTarg:168.6, DistTarg:14.2, DistN1:0.8, AlignN1:1.00, MinObs:0.6
+[2025-11-21 17:46:25] Episode: 219, Steps: 395, Total Reward: -76349.51, Status: All Collided
+  State Snapshot (Agent 0): Yaw:356.7, Vel:0.11, AngTarg:177.7, DistTarg:15.1, DistN1:1.2, AlignN1:1.00, MinObs:6.2
+[2025-11-21 17:46:32] Episode: 220, Steps: 346, Total Reward: -21220.17, Status: All Collided
+  State Snapshot (Agent 0): Yaw:69.1, Vel:0.66, AngTarg:38.7, DistTarg:7.6, DistN1:5.8, AlignN1:0.32, MinObs:2.3
+[2025-11-21 17:46:39] Episode: 221, Steps: 355, Total Reward: -22023.09, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.9, Vel:1.56, AngTarg:110.1, DistTarg:6.6, DistN1:5.9, AlignN1:1.00, MinObs:0.5
+[2025-11-21 17:46:47] Episode: 222, Steps: 444, Total Reward: -22502.30, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:357.8, Vel:0.33, AngTarg:125.9, DistTarg:7.8, DistN1:5.9, AlignN1:0.98, MinObs:1.3
+[2025-11-21 17:46:57] Episode: 223, Steps: 456, Total Reward: -65615.07, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:360.0, Vel:0.44, AngTarg:139.7, DistTarg:6.7, DistN1:6.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:47:03] Episode: 224, Steps: 339, Total Reward: -25933.08, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.3, Vel:0.18, AngTarg:150.8, DistTarg:9.4, DistN1:5.3, AlignN1:1.00, MinObs:2.6
+[2025-11-21 17:47:11] Episode: 225, Steps: 365, Total Reward: -45516.51, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:357.9, Vel:0.03, AngTarg:168.0, DistTarg:15.5, DistN1:1.2, AlignN1:1.00, MinObs:1.1
+[2025-11-21 17:47:20] Episode: 226, Steps: 466, Total Reward: 17877.95, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.6, Vel:0.75, AngTarg:147.7, DistTarg:8.5, DistN1:6.6, AlignN1:0.70, MinObs:1.7
+[2025-11-21 17:47:27] Episode: 227, Steps: 363, Total Reward: -30432.57, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:359.3, Vel:0.12, AngTarg:168.4, DistTarg:14.4, DistN1:1.3, AlignN1:1.00, MinObs:5.4
+[2025-11-21 17:47:33] Episode: 228, Steps: 277, Total Reward: -11141.39, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.0, Vel:0.06, AngTarg:160.5, DistTarg:11.3, DistN1:0.9, AlignN1:1.00, MinObs:0.8
+[2025-11-21 17:47:38] Episode: 229, Steps: 251, Total Reward: -23258.93, Status: All Collided
+  State Snapshot (Agent 0): Yaw:357.2, Vel:0.07, AngTarg:175.2, DistTarg:10.1, DistN1:1.2, AlignN1:1.00, MinObs:4.5
+[2025-11-21 17:47:47] Episode: 230, Steps: 454, Total Reward: -45896.90, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.7, Vel:0.02, AngTarg:157.6, DistTarg:7.9, DistN1:0.8, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:47:51] Episode: 231, Steps: 221, Total Reward: -24499.48, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.8, Vel:0.01, AngTarg:164.8, DistTarg:14.5, DistN1:1.2, AlignN1:1.00, MinObs:5.8
+[2025-11-21 17:47:57] Episode: 232, Steps: 299, Total Reward: -21272.44, Status: All Collided
+  State Snapshot (Agent 0): Yaw:2.0, Vel:0.00, AngTarg:165.1, DistTarg:13.0, DistN1:1.1, AlignN1:1.00, MinObs:1.0
+[2025-11-21 17:48:03] Episode: 233, Steps: 308, Total Reward: -41521.39, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:354.5, Vel:0.06, AngTarg:171.6, DistTarg:15.5, DistN1:1.4, AlignN1:1.00, MinObs:1.3
+[2025-11-21 17:48:09] Episode: 234, Steps: 296, Total Reward: -70638.09, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:357.7, Vel:0.05, AngTarg:178.5, DistTarg:15.8, DistN1:1.4, AlignN1:1.00, MinObs:5.0
+[2025-11-21 17:48:17] Episode: 235, Steps: 357, Total Reward: -22272.12, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.6, Vel:0.64, AngTarg:154.8, DistTarg:8.7, DistN1:0.6, AlignN1:1.00, MinObs:1.3
+[2025-11-21 17:48:20] Episode: 236, Steps: 187, Total Reward: -12146.47, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.0, Vel:0.62, AngTarg:165.3, DistTarg:10.7, DistN1:1.1, AlignN1:0.99, MinObs:0.9
+[2025-11-21 17:48:30] Episode: 237, Steps: 500, Total Reward: -51792.39, Status: Timeout
+  State Snapshot (Agent 0): Yaw:278.3, Vel:3.71, AngTarg:-109.4, DistTarg:17.3, DistN1:8.4, AlignN1:0.18, MinObs:4.8
+[2025-11-21 17:48:40] Episode: 238, Steps: 479, Total Reward: -43529.79, Status: All Collided
+  State Snapshot (Agent 0): Yaw:269.5, Vel:0.52, AngTarg:-90.8, DistTarg:23.3, DistN1:19.3, AlignN1:-0.01, MinObs:0.3
+[2025-11-21 17:49:10] Episode: 239, Steps: 378, Total Reward: -32250.42, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.4, Vel:0.21, AngTarg:169.6, DistTarg:8.1, DistN1:2.3, AlignN1:1.00, MinObs:1.6
+[2025-11-21 17:49:20] Episode: 240, Steps: 500, Total Reward: -21197.66, Status: Timeout
+  State Snapshot (Agent 0): Yaw:347.2, Vel:1.16, AngTarg:-166.1, DistTarg:17.0, DistN1:14.0, AlignN1:0.98, MinObs:2.7
+[2025-11-21 17:49:29] Episode: 241, Steps: 480, Total Reward: 3356.35, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:321.8, Vel:1.44, AngTarg:-141.9, DistTarg:21.6, DistN1:19.7, AlignN1:0.79, MinObs:0.2
+[2025-11-21 17:49:36] Episode: 242, Steps: 324, Total Reward: -20212.57, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.00, AngTarg:167.4, DistTarg:12.0, DistN1:2.9, AlignN1:1.00, MinObs:4.6
+[2025-11-21 17:49:43] Episode: 243, Steps: 354, Total Reward: -43176.48, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:3.9, Vel:0.01, AngTarg:168.5, DistTarg:15.5, DistN1:2.1, AlignN1:1.00, MinObs:6.0
+[2025-11-21 17:49:52] Episode: 244, Steps: 464, Total Reward: -56835.41, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.3, Vel:0.07, AngTarg:177.5, DistTarg:32.4, DistN1:25.1, AlignN1:1.00, MinObs:2.4
+[2025-11-21 17:50:02] Episode: 245, Steps: 500, Total Reward: 77164.00, Status: Timeout
+  State Snapshot (Agent 0): Yaw:43.6, Vel:2.96, AngTarg:132.2, DistTarg:26.9, DistN1:25.8, AlignN1:0.72, MinObs:0.7
+[2025-11-21 17:50:08] Episode: 246, Steps: 309, Total Reward: -13546.48, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:1.2, Vel:0.02, AngTarg:162.9, DistTarg:11.8, DistN1:1.1, AlignN1:1.00, MinObs:5.2
+[2025-11-21 17:50:17] Episode: 247, Steps: 420, Total Reward: -84962.76, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:2.3, Vel:0.08, AngTarg:166.7, DistTarg:17.0, DistN1:2.8, AlignN1:1.00, MinObs:4.7
+[2025-11-21 17:50:25] Episode: 248, Steps: 444, Total Reward: -59434.98, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.1, Vel:0.02, AngTarg:166.1, DistTarg:15.9, DistN1:1.8, AlignN1:1.00, MinObs:1.8
+[2025-11-21 17:50:35] Episode: 249, Steps: 500, Total Reward: -28814.81, Status: Timeout
+  State Snapshot (Agent 0): Yaw:211.7, Vel:1.85, AngTarg:-34.6, DistTarg:24.2, DistN1:24.5, AlignN1:-0.87, MinObs:0.7
+[2025-11-21 17:50:45] Episode: 250, Steps: 500, Total Reward: -33743.52, Status: Timeout
+  State Snapshot (Agent 0): Yaw:322.8, Vel:3.47, AngTarg:-153.1, DistTarg:28.9, DistN1:20.5, AlignN1:0.76, MinObs:3.5
+[2025-11-21 17:50:52] Episode: 251, Steps: 316, Total Reward: -36289.43, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.00, AngTarg:175.3, DistTarg:13.8, DistN1:2.7, AlignN1:1.00, MinObs:5.7
+[2025-11-21 17:50:59] Episode: 252, Steps: 373, Total Reward: -24757.79, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:1.6, Vel:0.56, AngTarg:170.2, DistTarg:23.0, DistN1:2.1, AlignN1:1.00, MinObs:3.1
+[2025-11-21 17:51:09] Episode: 253, Steps: 500, Total Reward: -58212.13, Status: Timeout
+  State Snapshot (Agent 0): Yaw:355.0, Vel:0.13, AngTarg:169.9, DistTarg:16.4, DistN1:3.2, AlignN1:1.00, MinObs:4.0
+[2025-11-21 17:51:19] Episode: 254, Steps: 500, Total Reward: -52932.51, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.6, Vel:0.00, AngTarg:167.8, DistTarg:13.0, DistN1:0.5, AlignN1:1.00, MinObs:0.3
+[2025-11-21 17:51:29] Episode: 255, Steps: 500, Total Reward: -43780.80, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.7, Vel:0.02, AngTarg:171.1, DistTarg:12.6, DistN1:1.3, AlignN1:1.00, MinObs:5.3
+[2025-11-21 17:51:39] Episode: 256, Steps: 500, Total Reward: -71042.73, Status: Timeout
+  State Snapshot (Agent 0): Yaw:1.1, Vel:0.02, AngTarg:170.0, DistTarg:15.4, DistN1:2.4, AlignN1:1.00, MinObs:5.8
+[2025-11-21 17:51:49] Episode: 257, Steps: 500, Total Reward: -52338.46, Status: Timeout
+  State Snapshot (Agent 0): Yaw:1.4, Vel:0.00, AngTarg:168.8, DistTarg:15.2, DistN1:1.0, AlignN1:1.00, MinObs:0.9
+[2025-11-21 17:51:59] Episode: 258, Steps: 500, Total Reward: -13171.46, Status: Timeout
+  State Snapshot (Agent 0): Yaw:315.0, Vel:0.41, AngTarg:-101.6, DistTarg:4.7, DistN1:6.9, AlignN1:0.71, MinObs:2.7
+[2025-11-21 17:52:09] Episode: 259, Steps: 500, Total Reward: -30261.90, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.9, Vel:0.02, AngTarg:160.0, DistTarg:7.2, DistN1:5.3, AlignN1:1.00, MinObs:0.7
+[2025-11-21 17:52:19] Episode: 260, Steps: 500, Total Reward: -9936.46, Status: Timeout
+  State Snapshot (Agent 0): Yaw:309.2, Vel:1.84, AngTarg:15.7, DistTarg:8.3, DistN1:1.7, AlignN1:0.63, MinObs:1.5
+[2025-11-21 17:52:29] Episode: 261, Steps: 500, Total Reward: -64477.49, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:3.59, AngTarg:-125.3, DistTarg:5.8, DistN1:8.7, AlignN1:1.00, MinObs:4.7
+[2025-11-21 17:52:38] Episode: 262, Steps: 416, Total Reward: -36576.03, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:5.7, Vel:0.17, AngTarg:171.6, DistTarg:7.7, DistN1:5.8, AlignN1:0.99, MinObs:2.1
+[2025-11-21 17:52:48] Episode: 263, Steps: 500, Total Reward: -16397.81, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.51, AngTarg:-168.2, DistTarg:6.3, DistN1:14.6, AlignN1:1.00, MinObs:10.8
+[2025-11-21 17:52:55] Episode: 264, Steps: 379, Total Reward: -29457.66, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.4, Vel:0.01, AngTarg:165.0, DistTarg:12.4, DistN1:0.8, AlignN1:1.00, MinObs:0.8
+[2025-11-21 17:53:05] Episode: 265, Steps: 500, Total Reward: -38507.54, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.38, AngTarg:-135.5, DistTarg:7.4, DistN1:11.7, AlignN1:0.99, MinObs:5.5
+[2025-11-21 17:53:13] Episode: 266, Steps: 410, Total Reward: -30883.92, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.02, AngTarg:158.6, DistTarg:7.8, DistN1:5.5, AlignN1:1.00, MinObs:1.4
+[2025-11-21 17:53:22] Episode: 267, Steps: 425, Total Reward: -46277.04, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.3, Vel:0.04, AngTarg:165.3, DistTarg:14.6, DistN1:1.9, AlignN1:1.00, MinObs:1.7
+[2025-11-21 17:53:31] Episode: 268, Steps: 477, Total Reward: -29816.43, Status: All Collided
+  State Snapshot (Agent 0): Yaw:317.7, Vel:0.37, AngTarg:18.5, DistTarg:12.1, DistN1:12.5, AlignN1:0.64, MinObs:0.2
+[2025-11-21 17:53:41] Episode: 269, Steps: 500, Total Reward: -35884.98, Status: Timeout
+  State Snapshot (Agent 0): Yaw:36.7, Vel:2.12, AngTarg:-66.9, DistTarg:7.1, DistN1:12.7, AlignN1:0.84, MinObs:4.8
+[2025-11-21 17:53:50] Episode: 270, Steps: 411, Total Reward: -39179.23, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.0, Vel:0.04, AngTarg:168.4, DistTarg:13.7, DistN1:1.1, AlignN1:1.00, MinObs:1.0
+[2025-11-21 17:54:00] Episode: 271, Steps: 500, Total Reward: -74358.28, Status: Timeout
+  State Snapshot (Agent 0): Yaw:315.0, Vel:1.11, AngTarg:-63.7, DistTarg:3.4, DistN1:11.4, AlignN1:0.78, MinObs:8.5
+[2025-11-21 17:54:07] Episode: 272, Steps: 382, Total Reward: -47001.46, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.6, Vel:0.00, AngTarg:169.5, DistTarg:13.2, DistN1:0.6, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:54:15] Episode: 273, Steps: 411, Total Reward: -7395.76, Status: All Collided
+  State Snapshot (Agent 0): Yaw:358.7, Vel:0.62, AngTarg:174.5, DistTarg:2.4, DistN1:14.6, AlignN1:0.86, MinObs:3.4
+[2025-11-21 17:54:40] Episode: 274, Steps: 500, Total Reward: -39350.28, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.00, AngTarg:-175.3, DistTarg:7.7, DistN1:2.3, AlignN1:1.00, MinObs:3.2
+[2025-11-21 17:54:50] Episode: 275, Steps: 500, Total Reward: -85190.24, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.55, AngTarg:-135.6, DistTarg:9.2, DistN1:13.1, AlignN1:1.00, MinObs:7.4
+[2025-11-21 17:54:59] Episode: 276, Steps: 449, Total Reward: -20700.25, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.9, Vel:0.05, AngTarg:173.6, DistTarg:5.7, DistN1:1.9, AlignN1:1.00, MinObs:1.7
+[2025-11-21 17:55:07] Episode: 277, Steps: 420, Total Reward: -44402.51, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.4, Vel:0.04, AngTarg:165.9, DistTarg:14.6, DistN1:1.6, AlignN1:1.00, MinObs:1.6
+[2025-11-21 17:55:15] Episode: 278, Steps: 407, Total Reward: -65513.04, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.0, Vel:0.01, AngTarg:162.8, DistTarg:15.7, DistN1:1.2, AlignN1:1.00, MinObs:0.9
+[2025-11-21 17:55:24] Episode: 279, Steps: 436, Total Reward: -32760.13, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.0, Vel:0.00, AngTarg:179.4, DistTarg:4.7, DistN1:1.1, AlignN1:1.00, MinObs:0.9
+[2025-11-21 17:55:34] Episode: 280, Steps: 500, Total Reward: -47713.75, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.1, Vel:0.01, AngTarg:169.2, DistTarg:13.9, DistN1:0.6, AlignN1:1.00, MinObs:0.6
+[2025-11-21 17:55:44] Episode: 281, Steps: 500, Total Reward: -37504.46, Status: Timeout
+  State Snapshot (Agent 0): Yaw:330.2, Vel:4.03, AngTarg:-86.3, DistTarg:2.7, DistN1:13.4, AlignN1:0.86, MinObs:0.7
+[2025-11-21 17:55:54] Episode: 282, Steps: 500, Total Reward: -28004.02, Status: Timeout
+  State Snapshot (Agent 0): Yaw:41.5, Vel:3.97, AngTarg:-97.4, DistTarg:3.6, DistN1:11.3, AlignN1:0.78, MinObs:1.5
+[2025-11-21 17:56:04] Episode: 283, Steps: 500, Total Reward: -25822.16, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.31, AngTarg:-44.2, DistTarg:7.8, DistN1:6.5, AlignN1:1.00, MinObs:4.1
+[2025-11-21 17:56:14] Episode: 284, Steps: 500, Total Reward: -48964.53, Status: Timeout
+  State Snapshot (Agent 0): Yaw:33.0, Vel:1.68, AngTarg:170.0, DistTarg:10.5, DistN1:8.1, AlignN1:0.84, MinObs:9.5
+[2025-11-21 17:56:24] Episode: 285, Steps: 500, Total Reward: -31482.15, Status: Timeout
+  State Snapshot (Agent 0): Yaw:51.7, Vel:0.65, AngTarg:156.2, DistTarg:2.2, DistN1:14.9, AlignN1:0.62, MinObs:5.4
+[2025-11-21 17:56:31] Episode: 286, Steps: 365, Total Reward: -40108.33, Status: All Collided
+  State Snapshot (Agent 0): Yaw:355.4, Vel:0.10, AngTarg:169.3, DistTarg:14.3, DistN1:1.3, AlignN1:1.00, MinObs:1.1
+[2025-11-21 17:56:41] Episode: 287, Steps: 500, Total Reward: -71427.53, Status: Timeout
+  State Snapshot (Agent 0): Yaw:45.0, Vel:1.64, AngTarg:164.4, DistTarg:10.7, DistN1:9.5, AlignN1:0.71, MinObs:5.8
+[2025-11-21 17:56:51] Episode: 288, Steps: 500, Total Reward: -42554.38, Status: Timeout
+  State Snapshot (Agent 0): Yaw:45.0, Vel:1.53, AngTarg:167.4, DistTarg:8.9, DistN1:13.9, AlignN1:0.71, MinObs:7.1
+[2025-11-21 17:57:01] Episode: 289, Steps: 500, Total Reward: -62212.21, Status: Timeout
+  State Snapshot (Agent 0): Yaw:45.0, Vel:1.67, AngTarg:172.5, DistTarg:9.2, DistN1:7.5, AlignN1:0.70, MinObs:7.3
+[2025-11-21 17:57:11] Episode: 290, Steps: 500, Total Reward: -59991.81, Status: Timeout
+  State Snapshot (Agent 0): Yaw:38.1, Vel:1.50, AngTarg:156.1, DistTarg:10.4, DistN1:6.0, AlignN1:0.80, MinObs:10.8
+[2025-11-21 17:57:21] Episode: 291, Steps: 500, Total Reward: -20253.38, Status: Timeout
+  State Snapshot (Agent 0): Yaw:45.0, Vel:1.67, AngTarg:163.4, DistTarg:5.5, DistN1:5.4, AlignN1:0.71, MinObs:4.5
+[2025-11-21 17:57:31] Episode: 292, Steps: 500, Total Reward: -46249.07, Status: Timeout
+  State Snapshot (Agent 0): Yaw:36.3, Vel:2.96, AngTarg:-76.5, DistTarg:3.5, DistN1:11.5, AlignN1:0.78, MinObs:1.5
+[2025-11-21 17:57:41] Episode: 293, Steps: 500, Total Reward: -53574.06, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.24, AngTarg:-140.6, DistTarg:5.5, DistN1:11.4, AlignN1:1.00, MinObs:3.4
+[2025-11-21 17:57:50] Episode: 294, Steps: 462, Total Reward: -51125.69, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.5, Vel:0.00, AngTarg:163.8, DistTarg:15.3, DistN1:1.5, AlignN1:1.00, MinObs:1.3
+[2025-11-21 17:58:00] Episode: 295, Steps: 500, Total Reward: -66806.44, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.94, AngTarg:-136.8, DistTarg:8.4, DistN1:13.1, AlignN1:1.00, MinObs:6.3
+[2025-11-21 17:58:08] Episode: 296, Steps: 364, Total Reward: -24782.64, Status: All Collided
+  State Snapshot (Agent 0): Yaw:5.4, Vel:0.60, AngTarg:166.3, DistTarg:8.6, DistN1:6.4, AlignN1:0.99, MinObs:4.0
+[2025-11-21 17:58:16] Episode: 297, Steps: 405, Total Reward: 40987.76, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.4, Vel:0.45, AngTarg:164.1, DistTarg:6.7, DistN1:7.7, AlignN1:1.00, MinObs:0.9
+[2025-11-21 17:58:26] Episode: 298, Steps: 500, Total Reward: -42235.15, Status: Timeout
+  State Snapshot (Agent 0): Yaw:43.2, Vel:1.65, AngTarg:165.1, DistTarg:8.0, DistN1:8.3, AlignN1:0.73, MinObs:6.9
+[2025-11-21 17:58:35] Episode: 299, Steps: 469, Total Reward: -72858.03, Status: All Collided
+  State Snapshot (Agent 0): Yaw:359.7, Vel:0.06, AngTarg:172.0, DistTarg:8.3, DistN1:0.7, AlignN1:1.00, MinObs:0.4
+[2025-11-21 17:58:43] Episode: 300, Steps: 411, Total Reward: -68488.04, Status: All Collided
+  State Snapshot (Agent 0): Yaw:1.1, Vel:0.02, AngTarg:164.1, DistTarg:16.0, DistN1:1.3, AlignN1:1.00, MinObs:3.9
+[2025-11-21 17:58:51] Episode: 301, Steps: 397, Total Reward: -45394.65, Status: All Collided
+  State Snapshot (Agent 0): Yaw:355.8, Vel:0.01, AngTarg:171.3, DistTarg:12.8, DistN1:0.8, AlignN1:0.99, MinObs:0.6
+[2025-11-21 17:58:59] Episode: 302, Steps: 405, Total Reward: -48344.79, Status: All Collided
+  State Snapshot (Agent 0): Yaw:0.7, Vel:0.07, AngTarg:-157.0, DistTarg:4.6, DistN1:1.8, AlignN1:1.00, MinObs:4.4
+[2025-11-21 17:59:09] Episode: 303, Steps: 500, Total Reward: 31985.43, Status: Timeout
+  State Snapshot (Agent 0): Yaw:339.9, Vel:1.69, AngTarg:-115.3, DistTarg:11.5, DistN1:11.3, AlignN1:0.90, MinObs:6.6
+[2025-11-21 17:59:19] Episode: 304, Steps: 454, Total Reward: -74032.56, Status: All Collided
+  State Snapshot (Agent 0): Yaw:3.9, Vel:0.46, AngTarg:172.0, DistTarg:9.9, DistN1:6.6, AlignN1:1.00, MinObs:11.2
+[2025-11-21 17:59:29] Episode: 305, Steps: 500, Total Reward: 39651.67, Status: Timeout
+  State Snapshot (Agent 0): Yaw:320.1, Vel:2.03, AngTarg:-93.1, DistTarg:12.2, DistN1:12.3, AlignN1:0.77, MinObs:7.4
+[2025-11-21 17:59:39] Episode: 306, Steps: 500, Total Reward: -70925.14, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.3, Vel:0.23, AngTarg:169.0, DistTarg:8.2, DistN1:1.0, AlignN1:1.00, MinObs:1.0
+[2025-11-21 17:59:49] Episode: 307, Steps: 500, Total Reward: -49893.52, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.57, AngTarg:-178.4, DistTarg:13.8, DistN1:7.3, AlignN1:1.00, MinObs:9.8
+[2025-11-21 17:59:59] Episode: 308, Steps: 500, Total Reward: -29498.45, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.12, AngTarg:-150.1, DistTarg:15.2, DistN1:11.5, AlignN1:1.00, MinObs:2.5
+[2025-11-21 18:00:07] Episode: 309, Steps: 437, Total Reward: -59486.46, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:359.0, Vel:0.17, AngTarg:166.7, DistTarg:16.2, DistN1:3.2, AlignN1:1.00, MinObs:4.1
+[2025-11-21 18:00:16] Episode: 310, Steps: 421, Total Reward: -53186.62, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.8, Vel:0.03, AngTarg:165.4, DistTarg:15.2, DistN1:0.8, AlignN1:1.00, MinObs:0.6
+[2025-11-21 18:00:26] Episode: 311, Steps: 500, Total Reward: -80383.37, Status: Timeout
+  State Snapshot (Agent 0): Yaw:4.0, Vel:0.50, AngTarg:149.4, DistTarg:8.5, DistN1:6.6, AlignN1:0.99, MinObs:1.0
+[2025-11-21 18:00:36] Episode: 312, Steps: 500, Total Reward: -32061.73, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.13, AngTarg:-129.0, DistTarg:10.1, DistN1:8.6, AlignN1:1.00, MinObs:10.3
+[2025-11-21 18:00:46] Episode: 313, Steps: 500, Total Reward: -51608.52, Status: Timeout
+  State Snapshot (Agent 0): Yaw:6.3, Vel:0.70, AngTarg:168.6, DistTarg:4.3, DistN1:1.2, AlignN1:0.99, MinObs:1.5
+[2025-11-21 18:00:56] Episode: 314, Steps: 500, Total Reward: -40405.27, Status: Timeout
+  State Snapshot (Agent 0): Yaw:315.0, Vel:1.58, AngTarg:-108.1, DistTarg:14.3, DistN1:8.7, AlignN1:0.66, MinObs:2.4
+[2025-11-21 18:01:04] Episode: 315, Steps: 407, Total Reward: -53461.77, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.00, AngTarg:168.3, DistTarg:14.3, DistN1:1.1, AlignN1:1.00, MinObs:1.0
+[2025-11-21 18:01:14] Episode: 316, Steps: 500, Total Reward: -44441.05, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.34, AngTarg:-173.9, DistTarg:13.7, DistN1:9.2, AlignN1:1.00, MinObs:5.0
+[2025-11-21 18:01:24] Episode: 317, Steps: 500, Total Reward: -76689.75, Status: Timeout
+  State Snapshot (Agent 0): Yaw:360.0, Vel:0.15, AngTarg:-179.3, DistTarg:8.3, DistN1:1.5, AlignN1:1.00, MinObs:4.7
+[2025-11-21 18:01:34] Episode: 318, Steps: 500, Total Reward: -64487.16, Status: Timeout
+  State Snapshot (Agent 0): Yaw:5.3, Vel:0.59, AngTarg:166.8, DistTarg:11.3, DistN1:7.5, AlignN1:0.99, MinObs:9.9
+[2025-11-21 18:01:44] Episode: 319, Steps: 500, Total Reward: -83287.23, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.28, AngTarg:-170.1, DistTarg:21.4, DistN1:18.8, AlignN1:1.00, MinObs:2.5
+[2025-11-21 18:01:54] Episode: 320, Steps: 500, Total Reward: -80822.85, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.2, Vel:0.60, AngTarg:163.7, DistTarg:10.4, DistN1:7.7, AlignN1:1.00, MinObs:7.0
+[2025-11-21 18:02:04] Episode: 321, Steps: 500, Total Reward: -70997.93, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.8, Vel:0.03, AngTarg:159.7, DistTarg:7.2, DistN1:4.7, AlignN1:1.00, MinObs:0.6
+[2025-11-21 18:02:14] Episode: 322, Steps: 500, Total Reward: -39106.89, Status: Timeout
+  State Snapshot (Agent 0): Yaw:90.0, Vel:1.35, AngTarg:-172.2, DistTarg:2.9, DistN1:4.4, AlignN1:-0.01, MinObs:1.2
+[2025-11-21 18:02:24] Episode: 323, Steps: 500, Total Reward: -48218.67, Status: Timeout
+  State Snapshot (Agent 0): Yaw:7.0, Vel:0.01, AngTarg:166.2, DistTarg:7.6, DistN1:5.6, AlignN1:0.99, MinObs:1.1
+[2025-11-21 18:02:34] Episode: 324, Steps: 500, Total Reward: -65195.18, Status: Timeout
+  State Snapshot (Agent 0): Yaw:355.0, Vel:0.76, AngTarg:153.7, DistTarg:10.9, DistN1:8.9, AlignN1:0.99, MinObs:5.6
+[2025-11-21 18:02:44] Episode: 325, Steps: 500, Total Reward: -15544.66, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:1.96, AngTarg:-85.2, DistTarg:3.9, DistN1:4.4, AlignN1:1.00, MinObs:5.5
+[2025-11-21 18:02:54] Episode: 326, Steps: 500, Total Reward: -84558.68, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:2.29, AngTarg:-135.4, DistTarg:9.3, DistN1:10.2, AlignN1:1.00, MinObs:7.5
+[2025-11-21 18:03:04] Episode: 327, Steps: 500, Total Reward: -33647.99, Status: Timeout
+  State Snapshot (Agent 0): Yaw:319.8, Vel:1.82, AngTarg:-100.2, DistTarg:9.6, DistN1:9.3, AlignN1:0.76, MinObs:7.5
+[2025-11-21 18:03:14] Episode: 328, Steps: 500, Total Reward: -54487.73, Status: Timeout
+  State Snapshot (Agent 0): Yaw:4.6, Vel:0.59, AngTarg:170.4, DistTarg:10.6, DistN1:6.7, AlignN1:0.99, MinObs:34.5
+[2025-11-21 18:03:24] Episode: 329, Steps: 500, Total Reward: -58556.71, Status: Timeout
+  State Snapshot (Agent 0): Yaw:1.2, Vel:0.01, AngTarg:167.3, DistTarg:14.2, DistN1:0.9, AlignN1:1.00, MinObs:1.0
+[2025-11-21 18:03:34] Episode: 330, Steps: 500, Total Reward: -18034.46, Status: Timeout
+  State Snapshot (Agent 0): Yaw:360.0, Vel:0.02, AngTarg:160.4, DistTarg:2.5, DistN1:3.5, AlignN1:1.00, MinObs:3.1
+[2025-11-21 18:03:44] Episode: 331, Steps: 493, Total Reward: 47158.10, Status: Mixed Outcomes
+  State Snapshot (Agent 0): Yaw:355.5, Vel:0.33, AngTarg:56.4, DistTarg:2.4, DistN1:2.3, AlignN1:1.00, MinObs:3.5
+[2025-11-21 18:03:54] Episode: 332, Steps: 500, Total Reward: -74576.74, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.0, Vel:0.10, AngTarg:159.6, DistTarg:8.3, DistN1:5.6, AlignN1:1.00, MinObs:0.8
+[2025-11-21 18:04:04] Episode: 333, Steps: 500, Total Reward: -116615.05, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.4, Vel:0.78, AngTarg:161.2, DistTarg:12.9, DistN1:10.3, AlignN1:1.00, MinObs:12.0
+[2025-11-21 18:04:14] Episode: 334, Steps: 500, Total Reward: -90660.72, Status: Timeout
+  State Snapshot (Agent 0): Yaw:358.0, Vel:0.51, AngTarg:151.4, DistTarg:10.5, DistN1:8.4, AlignN1:1.00, MinObs:11.2
+[2025-11-21 18:04:24] Episode: 335, Steps: 500, Total Reward: -54384.09, Status: Timeout
+  State Snapshot (Agent 0): Yaw:1.1, Vel:0.09, AngTarg:160.9, DistTarg:6.3, DistN1:3.6, AlignN1:1.00, MinObs:0.4
+[2025-11-21 18:04:34] Episode: 336, Steps: 500, Total Reward: -64148.41, Status: Timeout
+  State Snapshot (Agent 0): Yaw:360.0, Vel:0.03, AngTarg:-168.0, DistTarg:2.9, DistN1:0.9, AlignN1:1.00, MinObs:0.8
+[2025-11-21 18:04:44] Episode: 337, Steps: 500, Total Reward: -47771.66, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.8, Vel:0.03, AngTarg:163.9, DistTarg:7.3, DistN1:4.9, AlignN1:1.00, MinObs:1.0
+[2025-11-21 18:04:54] Episode: 338, Steps: 500, Total Reward: -29126.26, Status: Timeout
+  State Snapshot (Agent 0): Yaw:2.6, Vel:0.15, AngTarg:159.8, DistTarg:8.4, DistN1:9.6, AlignN1:1.00, MinObs:0.9
+[2025-11-21 18:05:18] Episode: 339, Steps: 500, Total Reward: -48918.10, Status: Timeout
+  State Snapshot (Agent 0): Yaw:42.4, Vel:2.88, AngTarg:-120.9, DistTarg:2.0, DistN1:4.5, AlignN1:0.71, MinObs:6.9
+[2025-11-21 18:05:48] Episode: 340, Steps: 500, Total Reward: -30128.13, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.4, Vel:0.00, AngTarg:-175.2, DistTarg:2.5, DistN1:13.0, AlignN1:1.00, MinObs:4.0
+[2025-11-21 18:05:58] Episode: 341, Steps: 500, Total Reward: -33947.01, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.4, Vel:0.14, AngTarg:151.7, DistTarg:7.5, DistN1:8.4, AlignN1:1.00, MinObs:0.3
+[2025-11-21 18:06:08] Episode: 342, Steps: 500, Total Reward: 45657.29, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.0, Vel:0.04, AngTarg:-54.3, DistTarg:1.3, DistN1:5.9, AlignN1:1.00, MinObs:5.7
+[2025-11-21 18:06:18] Episode: 343, Steps: 500, Total Reward: -32620.90, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.2, Vel:0.02, AngTarg:163.3, DistTarg:7.4, DistN1:6.9, AlignN1:0.92, MinObs:0.3
+[2025-11-21 18:06:28] Episode: 344, Steps: 500, Total Reward: -44263.58, Status: Timeout
+  State Snapshot (Agent 0): Yaw:358.6, Vel:0.64, AngTarg:166.4, DistTarg:9.6, DistN1:8.6, AlignN1:0.60, MinObs:10.3
+[2025-11-21 18:06:38] Episode: 345, Steps: 500, Total Reward: -11730.44, Status: Timeout
+  State Snapshot (Agent 0): Yaw:358.6, Vel:0.00, AngTarg:174.1, DistTarg:2.2, DistN1:11.0, AlignN1:1.00, MinObs:3.7
+[2025-11-21 18:06:48] Episode: 346, Steps: 500, Total Reward: -17483.18, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.6, Vel:0.02, AngTarg:-178.4, DistTarg:2.6, DistN1:11.0, AlignN1:1.00, MinObs:3.7
+[2025-11-21 18:06:58] Episode: 347, Steps: 500, Total Reward: -21359.39, Status: Timeout
+  State Snapshot (Agent 0): Yaw:358.6, Vel:0.00, AngTarg:170.9, DistTarg:2.2, DistN1:1.4, AlignN1:0.85, MinObs:1.3
+[2025-11-21 18:07:08] Episode: 348, Steps: 500, Total Reward: -24675.07, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.8, Vel:0.01, AngTarg:-174.7, DistTarg:2.8, DistN1:10.3, AlignN1:0.05, MinObs:3.7
+[2025-11-21 18:07:18] Episode: 349, Steps: 500, Total Reward: -68929.88, Status: Timeout
+  State Snapshot (Agent 0): Yaw:360.0, Vel:0.03, AngTarg:167.0, DistTarg:16.1, DistN1:1.9, AlignN1:1.00, MinObs:1.9
+[2025-11-21 18:07:28] Episode: 350, Steps: 500, Total Reward: -41398.90, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.7, Vel:0.12, AngTarg:152.9, DistTarg:7.8, DistN1:9.6, AlignN1:1.00, MinObs:0.6
+[2025-11-21 18:07:38] Episode: 351, Steps: 500, Total Reward: -71317.90, Status: Timeout
+  State Snapshot (Agent 0): Yaw:1.0, Vel:0.79, AngTarg:160.9, DistTarg:12.4, DistN1:14.5, AlignN1:1.00, MinObs:11.0
+[2025-11-21 18:07:48] Episode: 352, Steps: 500, Total Reward: -100688.83, Status: Timeout
+  State Snapshot (Agent 0): Yaw:359.5, Vel:0.01, AngTarg:166.7, DistTarg:16.4, DistN1:0.3, AlignN1:1.00, MinObs:0.1
+[2025-11-21 18:07:58] Episode: 353, Steps: 500, Total Reward: -26198.05, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.1, Vel:0.01, AngTarg:163.7, DistTarg:7.4, DistN1:7.8, AlignN1:1.00, MinObs:0.5
+[2025-11-21 18:08:08] Episode: 354, Steps: 500, Total Reward: -57435.78, Status: Timeout
+  State Snapshot (Agent 0): Yaw:355.8, Vel:1.10, AngTarg:147.9, DistTarg:12.1, DistN1:12.5, AlignN1:0.63, MinObs:5.0
+[2025-11-21 18:08:18] Episode: 355, Steps: 500, Total Reward: -20457.69, Status: Timeout
+  State Snapshot (Agent 0): Yaw:2.3, Vel:0.50, AngTarg:157.8, DistTarg:10.4, DistN1:12.2, AlignN1:1.00, MinObs:4.2
+[2025-11-21 18:08:28] Episode: 356, Steps: 500, Total Reward: -76482.05, Status: Timeout
+  State Snapshot (Agent 0): Yaw:0.3, Vel:1.30, AngTarg:163.7, DistTarg:14.4, DistN1:12.9, AlignN1:0.90, MinObs:6.4
+[2025-11-21 18:08:38] Episode: 357, Steps: 500, Total Reward: -83090.54, Status: Timeout
+  State Snapshot (Agent 0): Yaw:1.3, Vel:0.01, AngTarg:166.1, DistTarg:15.2, DistN1:0.9, AlignN1:1.00, MinObs:0.6

@@ -19,8 +19,8 @@ TAU = 0.01
 ACTOR_LR = 0.0001       # Reduced from 0.001 to prevent policy collapse
 CRITIC_LR = 0.001
 NUM_DRONES = 3
-STATE_DIM = 17  # Excludes reward and termination flag
-FULL_STATE_DIM = 19  # Includes reward and termination flag (17+1+1)
+STATE_DIM = 19  # Excludes reward and termination flag
+FULL_STATE_DIM = 21  # Includes reward and termination flag (19+1+1)
 ACTION_DIM = 2
 HIDDEN_DIM = 64
 NUM_EPISODES = 1000
@@ -334,10 +334,10 @@ def save_loss_plot(maddpg, filename="att_maddpg_losses.png"):
     plt.close()
 
 def format_state(state):
-    # state: [17]
-    # 0: yaw, 1: vel, 2: angle_target, 3: dist_target, 4: ang_n1, 5: dist_n1, 6: ang_n2, 7: dist_n2, 8-16: sensors
+    # state: [19]
+    # 0: yaw, 1: vel, 2: angle_target, 3: dist_target, 4: ang_n1, 5: dist_n1, 6: ang_n2, 7: dist_n2, 8-16: sensors, 17: align_n1, 18: align_n2
     return (f"Yaw:{state[0]:.1f}, Vel:{state[1]:.2f}, AngTarg:{state[2]:.1f}, DistTarg:{state[3]:.1f}, "
-            f"DistN1:{state[5]:.1f}, DistN2:{state[7]:.1f}, MinObs:{np.min(state[8:]):.1f}")
+            f"DistN1:{state[5]:.1f}, AlignN1:{state[17]:.2f}, MinObs:{np.min(state[8:17]):.1f}")
 
 def main():
     maddpg = ATT_MADDPG(NUM_DRONES, STATE_DIM, ACTION_DIM)
