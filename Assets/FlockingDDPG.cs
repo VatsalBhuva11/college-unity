@@ -16,15 +16,17 @@ public class FlockingDrones : MonoBehaviour
     private Vector3[] initialDronePositions;
     private Quaternion[] initialDroneRotations;
     private float[] prevDistToTarget; // To calculate reward
+    private bool[] droneDone;
 
     private int terminationFlag = 0; // 0: running, 1: target reached, 2: collision
     public float MAX_SPEED = 10f;          // tune based on environment
-    public float MAX_STEERING_DEG = 10f;   // max steering angle in degrees
+    public float MAX_STEERING_DEG = 3f;    // max steering angle in degrees (reduced for smoother turns)
 
 
     void Start()
     {
         prevDistToTarget = new float[NUM_DRONES];
+        droneDone = new bool[NUM_DRONES];
         ConnectToPython();
         StoreInitialPositions();
         
@@ -47,6 +49,7 @@ public class FlockingDrones : MonoBehaviour
             // Randomize rotation slightly to encourage diverse exploration
             float randomY = UnityEngine.Random.Range(-180f, 180f);
             drones[i].transform.rotation = Quaternion.Euler(0, randomY, 0);
+            droneDone[i] = false;
             
             CollisionDetector collisionDetector = drones[i].GetComponent<CollisionDetector>();
             if (collisionDetector != null)
@@ -60,6 +63,11 @@ public class FlockingDrones : MonoBehaviour
         for (int i = 0; i < NUM_DRONES; i++) {
             prevDistToTarget[i] = Vector3.Distance(drones[i].transform.position, target.position);
         }
+    }
+
+    bool DroneAtTarget(int index)
+    {
+        return Vector3.Distance(drones[index].transform.position, target.position) <= 2.0f;
     }
 
     void StoreInitialPositions()
@@ -145,27 +153,27 @@ public class FlockingDrones : MonoBehaviour
         float curDist = currentState[3]; // Distance to target is at index 3
         float prevDist = prevDistToTarget[droneIndex];
         
-        // 1. Base movement reward (Increased weight)
-        float reward = (prevDist - curDist) * 200f;
+        // 1. Base movement reward (scaled down to keep values small)
+        float reward = (prevDist - curDist) * 30f;
         
         // 2. Target reached / Collision
-        if (doneFlag == 1) reward += 200f;
-        else if (doneFlag == 2) reward -= 100f;
+        if (doneFlag == 1) reward += 50f;
+        else if (doneFlag == 2) reward -= 50f;
         
         // 3. Flocking
         float minDist1 = currentState[5]; // Min dist neighbor is at index 5
-        if (minDist1 < 5f) reward -= 20f;
-        else if (minDist1 >= 10f && minDist1 <= 30f) reward += 5f;
+        if (minDist1 < 5f) reward -= 5f;
+        else if (minDist1 >= 10f && minDist1 <= 30f) reward += 1f;
         
         // 4. Obstacles indices 8 to 16 (9 rays)
         float minObstacle = 40f;
         for (int i = 8; i <= 16; i++) {
             if (currentState[i] < minObstacle) minObstacle = currentState[i];
         }
-        if (minObstacle < 10f) reward -= 10f * (10f - minObstacle);
+        if (minObstacle < 10f) reward -= 2f * (10f - minObstacle);
         
         // 5. Step penalty
-        reward -= 0.5f; 
+        reward -= 0.1f; 
         
         // 6. Action Smoothness / Steering Penalty
         // actions[0] is steering ([-1,1])
@@ -173,23 +181,13 @@ public class FlockingDrones : MonoBehaviour
         if (actions != null)
         {
             float steering = actions[0];
-            reward -= Mathf.Abs(steering) * 0.5f; // Reduced from 2.0f to allow necessary turns
+            reward -= Mathf.Abs(steering) * 0.1f;
         }
         
         // 7. Movement incentive
         // If velocity (index 1) is very low, penalize slightly
         float velocity = currentState[1];
-        if (velocity < 0.5f) reward -= 2.0f; // Increased penalty for stagnation
-
-        // 8. Velocity Direction Incentive
-        // Instead of facing angle, reward moving towards the target (dot product of velocity and direction)
-        // We need direction to target. state[2] is signed angle, state[3] is dist.
-        // Let's re-calculate precise direction vector here or pass it?
-        // Simpler: Reward (prevDist - curDist) is already doing this physically.
-        // But explicitly rewarding the velocity vector alignment can help.
-        // However, we don't have the velocity vector in 'currentState', only magnitude.
-        // So we rely heavily on Item 1 (Distance Delta).
-        // Removed the "Facing Alignment" reward to allow backward movement.
+        if (velocity < 0.5f) reward -= 0.5f;
 
         return reward;
     }
@@ -210,13 +208,13 @@ public class FlockingDrones : MonoBehaviour
             
             // Individual termination flag per drone
             int droneTerminationFlag = 0;
-            if (terminationFlag == 1) // Target reached (all drones)
+            if (DroneAtTarget(i))
             {
                 droneTerminationFlag = 1;
+                droneDone[i] = true;
             }
-            else if (terminationFlag == 2) // Collision occurred
+            else if (droneDone[i])
             {
-                // Mark as collision
                 droneTerminationFlag = 2;
             }
             
@@ -258,6 +256,9 @@ public class FlockingDrones : MonoBehaviour
 
         for (int i = 0; i < NUM_DRONES; i++)
         {
+            if (droneDone[i])
+                continue;
+
             // store prev dist for reward calc
             prevDistToTarget[i] = Vector3.Distance(drones[i].transform.position, target.position);
             
@@ -311,19 +312,36 @@ public class FlockingDrones : MonoBehaviour
     // Checks termination conditions (collision or target reached).
     void CheckTerminationConditions()
     {
-        if (CheckCollision())
+        bool allReached = true;
+        bool allInactive = true;
+
+        for (int i = 0; i < NUM_DRONES; i++)
         {
-            Debug.Log("Episode Ended: Collision detected.");
-            terminationFlag = 2; // Collision
+            CollisionDetector detector = drones[i].GetComponent<CollisionDetector>();
+            if (detector != null && detector.HasCollided)
+            {
+                droneDone[i] = true;
+            }
+
+            bool reached = DroneAtTarget(i);
+            if (!reached)
+            {
+                allReached = false;
+            }
+
+            if (!droneDone[i])
+            {
+                allInactive = false;
+            }
         }
-        else if (CheckTargetReached())
+
+        if (allReached || allInactive)
         {
-            Debug.Log("Episode Ended: Target reached.");
-            terminationFlag = 1; // Target reached
+            terminationFlag = 1;
         }
         else
         {
-            terminationFlag = 0; // Still running
+            terminationFlag = 0;
         }
     }
 
@@ -353,6 +371,15 @@ public class FlockingDrones : MonoBehaviour
         {
             // 1. Receive actions from Python
             float[] actions = ReceiveActionsFromPython();
+            if (actions == null) yield break; // disconnected
+
+            // Special reset signal from Python (first value -99)
+            if (actions.Length > 0 && Mathf.Approximately(actions[0], -99f))
+            {
+                ResetDrones();
+                SendStatesToPython(new float[NUM_DRONES]);
+                continue;
+            }
 
             // 2. Apply actions to drones (and store prev dists)
             ApplyActionsToDrones(actions);

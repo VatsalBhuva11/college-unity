@@ -302,6 +302,12 @@ class UnitySocket:
         data = struct.pack(fmt_send, *actions_flat)
         self.conn.sendall(data)
 
+    def send_reset(self):
+        reset_actions = [-99.0] * (NUM_DRONES * ACTION_DIM)
+        fmt_send = '<' + 'f' * len(reset_actions)
+        data = struct.pack(fmt_send, *reset_actions)
+        self.conn.sendall(data)
+
     def close(self):
         if self.conn:
             self.conn.close()
@@ -313,6 +319,19 @@ def log_training(episode, steps, total_reward, status, states_info=None):
         f.write(f"[{timestamp}] Episode: {episode}, Steps: {steps}, Total Reward: {total_reward:.2f}, Status: {status}\n")
         if states_info:
              f.write(f"  State Snapshot (Agent 0): {states_info}\n")
+
+def save_loss_plot(maddpg, filename="att_maddpg_losses.png"):
+    if len(maddpg.value_losses) == 0:
+        return
+    plt.figure(figsize=(12, 6))
+    plt.plot(maddpg.value_losses, label="Critic Loss")
+    plt.plot(maddpg.policy_losses, label="Actor Loss")
+    plt.legend()
+    plt.xlabel("Training Steps")
+    plt.ylabel("Loss")
+    plt.title("ATT-MADDPG Loss Curves")
+    plt.savefig(filename)
+    plt.close()
 
 def format_state(state):
     # state: [17]
@@ -375,9 +394,15 @@ def main():
                     break
                 
                 dones = [1 if f != 0 else 0 for f in flags]
-                if any(dones):
+                if all(dones):
                     episode_over = True
-                    status_code = int(max(flags)) # 1=Target, 2=Collision
+                    unique_flags = set(flags)
+                    if unique_flags == {1}:
+                        status_code = 1
+                    elif unique_flags == {2}:
+                        status_code = 2
+                    else:
+                        status_code = 3  # mixed outcomes
 
                 # Only train if in training mode
                 if training_mode:
@@ -396,18 +421,30 @@ def main():
                         print(f"  Drone {d_i}: Rew:{rewards[d_i]:.2f}, {s_info}, Act:{actions[d_i]}")
                 
                 if episode_over:
-                    status_str = "Target Reached" if status_code == 1 else "Collision"
+                    if status_code == 1:
+                        status_str = "All Targets Reached"
+                    elif status_code == 2:
+                        status_str = "All Collided"
+                    else:
+                        status_str = "Mixed Outcomes"
                     print(f"Episode ended. Status: {status_str}")
                     # Log detailed state of agent 0 at end
                     log_training(episode, step, total_reward, status_str, format_state(states[0]))
                     states, _, _ = unity.receive_state()
                     break
+
+            if not episode_over:
+                print("Episode ended. Status: Timeout")
+                log_training(episode, step, total_reward, "Timeout", format_state(states[0]) if states is not None else None)
+                unity.send_reset()
+                states, _, _ = unity.receive_state()
             
             print(f"Total Reward: {total_reward:.2f}")
             
             # Save model periodically
             if training_mode and episode % 10 == 0:
                 maddpg.save_model()
+                save_loss_plot(maddpg)
             
     except KeyboardInterrupt:
         print("Interrupted.")
@@ -417,12 +454,8 @@ def main():
         unity.close()
         
     # Plot losses
-    if training_mode and len(maddpg.value_losses) > 0:
-        plt.figure(figsize=(12, 6))
-        plt.plot(maddpg.value_losses, label="Critic Loss")
-        plt.plot(maddpg.policy_losses, label="Actor Loss")
-        plt.legend()
-        plt.savefig('att_maddpg_losses.png')
+    if training_mode:
+        save_loss_plot(maddpg)
         print("Saved loss plot to att_maddpg_losses.png")
 
 if __name__ == "__main__":
