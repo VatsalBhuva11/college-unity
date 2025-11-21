@@ -17,6 +17,7 @@ public class FlockingDrones : MonoBehaviour
     private Quaternion[] initialDroneRotations;
     private float[] prevDistToTarget; // To calculate reward
     private bool[] droneDone;
+    private bool[] droneDone;
 
     private int terminationFlag = 0; // 0: running, 1: target reached, 2: collision
     public float MAX_SPEED = 10f;          // tune based on environment
@@ -27,12 +28,14 @@ public class FlockingDrones : MonoBehaviour
     {
         prevDistToTarget = new float[NUM_DRONES];
         droneDone = new bool[NUM_DRONES];
+        droneDone = new bool[NUM_DRONES];
         ConnectToPython();
         StoreInitialPositions();
         
         // Send initial state ONCE with reward=0, done=0
         float[] initialRewards = new float[NUM_DRONES]; // All zeros
-        SendStatesToPython(initialRewards);
+        int[] initialFlags = new int[NUM_DRONES];
+        SendStatesToPython(initialRewards, initialFlags);
         
         StartCoroutine(CommunicationLoop());
     }
@@ -56,6 +59,8 @@ public class FlockingDrones : MonoBehaviour
             {
                 collisionDetector.HasCollided = false;
             }
+
+            droneDone[i] = false;
         }
         terminationFlag = 0; // Reset termination flag
         
@@ -80,6 +85,11 @@ public class FlockingDrones : MonoBehaviour
             initialDroneRotations[i] = drones[i].transform.rotation;
             prevDistToTarget[i] = Vector3.Distance(drones[i].transform.position, target.position);
         }
+    }
+
+    bool DroneAtTarget(int index)
+    {
+        return Vector3.Distance(drones[index].transform.position, target.position) <= 2.0f;
     }
 
     void ConnectToPython()
@@ -148,7 +158,7 @@ public class FlockingDrones : MonoBehaviour
         return state;
     }
     
-    float CalculateReward(int droneIndex, float[] currentState, int doneFlag, float[] actions)
+    float CalculateReward(int droneIndex, float[] currentState, int droneFlag, float[] actions)
     {
         float curDist = currentState[3]; // Distance to target is at index 3
         float prevDist = prevDistToTarget[droneIndex];
@@ -157,8 +167,8 @@ public class FlockingDrones : MonoBehaviour
         float reward = (prevDist - curDist) * 30f;
         
         // 2. Target reached / Collision
-        if (doneFlag == 1) reward += 50f;
-        else if (doneFlag == 2) reward -= 50f;
+        if (droneFlag == 1) reward += 200f;
+        else if (droneFlag == 2) reward -= 50f;
         
         // 3. Flocking
         float minDist1 = currentState[5]; // Min dist neighbor is at index 5
@@ -173,7 +183,7 @@ public class FlockingDrones : MonoBehaviour
         if (minObstacle < 10f) reward -= 2f * (10f - minObstacle);
         
         // 5. Step penalty
-        reward -= 0.1f; 
+        reward -= 0.2f; 
         
         // 6. Action Smoothness / Steering Penalty
         // actions[0] is steering ([-1,1])
@@ -187,14 +197,14 @@ public class FlockingDrones : MonoBehaviour
         // 7. Movement incentive
         // If velocity (index 1) is very low, penalize slightly
         float velocity = currentState[1];
-        if (velocity < 0.5f) reward -= 0.5f;
+        if (velocity < 0.5f) reward -= 1.0f;
 
         return reward;
     }
 
     // Sends the states of all drones to Python with individual termination flags and rewards
     // Protocol: [State(17), Reward(1), Flag(1)] * NUM_DRONES
-    void SendStatesToPython(float[] rewards)
+    void SendStatesToPython(float[] rewards, int[] flags)
     {
         int packetSize = STATE_DIM + 2; 
         float[] allData = new float[NUM_DRONES * packetSize];
@@ -205,20 +215,7 @@ public class FlockingDrones : MonoBehaviour
             Array.Copy(state, 0, allData, i * packetSize, STATE_DIM);
             
             allData[i * packetSize + STATE_DIM] = rewards[i];
-            
-            // Individual termination flag per drone
-            int droneTerminationFlag = 0;
-            if (DroneAtTarget(i))
-            {
-                droneTerminationFlag = 1;
-                droneDone[i] = true;
-            }
-            else if (droneDone[i])
-            {
-                droneTerminationFlag = 2;
-            }
-            
-            allData[i * packetSize + STATE_DIM + 1] = (float)droneTerminationFlag;
+            allData[i * packetSize + STATE_DIM + 1] = flags[i];
         }
         
         byte[] data = new byte[allData.Length * 4];
@@ -312,8 +309,7 @@ public class FlockingDrones : MonoBehaviour
     // Checks termination conditions (collision or target reached).
     void CheckTerminationConditions()
     {
-        bool allReached = true;
-        bool allInactive = true;
+        bool allDone = true;
 
         for (int i = 0; i < NUM_DRONES; i++)
         {
@@ -323,19 +319,18 @@ public class FlockingDrones : MonoBehaviour
                 droneDone[i] = true;
             }
 
-            bool reached = DroneAtTarget(i);
-            if (!reached)
+            if (!droneDone[i] && DroneAtTarget(i))
             {
-                allReached = false;
+                droneDone[i] = true;
             }
 
             if (!droneDone[i])
             {
-                allInactive = false;
+                allDone = false;
             }
         }
 
-        if (allReached || allInactive)
+        if (allDone)
         {
             terminationFlag = 1;
         }
@@ -377,7 +372,7 @@ public class FlockingDrones : MonoBehaviour
             if (actions.Length > 0 && Mathf.Approximately(actions[0], -99f))
             {
                 ResetDrones();
-                SendStatesToPython(new float[NUM_DRONES]);
+                SendStatesToPython(new float[NUM_DRONES], new int[NUM_DRONES]);
                 continue;
             }
 
@@ -392,6 +387,7 @@ public class FlockingDrones : MonoBehaviour
             
             // 5. Calculate Rewards based on new state
             float[] rewards = new float[NUM_DRONES];
+            int[] droneFlags = new int[NUM_DRONES];
             for(int i=0; i<NUM_DRONES; i++) {
                 float[] state = GetDroneState(drones[i]);
                 
@@ -402,19 +398,33 @@ public class FlockingDrones : MonoBehaviour
                 else 
                     droneAction = null;
 
-                // Flag is global (terminationFlag)
-                rewards[i] = CalculateReward(i, state, terminationFlag, droneAction);
+                int flag = 0;
+                CollisionDetector detector = drones[i].GetComponent<CollisionDetector>();
+                bool collided = detector != null && detector.HasCollided;
+                if (DroneAtTarget(i))
+                {
+                    flag = 1;
+                    droneDone[i] = true;
+                }
+                else if (droneDone[i] || collided)
+                {
+                    flag = 2;
+                    droneDone[i] = true;
+                }
+
+                droneFlags[i] = flag;
+                rewards[i] = CalculateReward(i, state, flag, droneAction);
             }
             
             // 6. Send the NEXT state, Reward, and Flag
-            SendStatesToPython(rewards);
+            SendStatesToPython(rewards, droneFlags);
 
             // 7. If episode ended, reset and send initial state for next episode
             if (terminationFlag != 0)
             {
                 ResetDrones();
                 // Send new initial state (Rewards=0)
-                SendStatesToPython(new float[NUM_DRONES]);
+                SendStatesToPython(new float[NUM_DRONES], new int[NUM_DRONES]);
             }
         }
     }
