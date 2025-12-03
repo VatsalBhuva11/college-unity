@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 """
 ATT-MADDPG trainer adapted from test.py for Unity communication.
+Added: per-episode reward tracking and plotting (moving average).
 Protocol:
   - Unity -> Python: for each drone: [19 floats state] + [1 float reward] + [1 float flag]
     -> total floats per step = NUM_DRONES * 21
   - Python -> Unity: actions flattened: NUM_DRONES * ACTION_DIM floats
   - Reset signal: Python sends float -99.0 as first float of action packet (length NUM_DRONES * ACTION_DIM).
-This file contains:
-  - Actor, AttentionCritic, Agent classes
-  - ATT_MADDPG training loop
-  - UnitySocket class (TCP server)
 """
 import os
 import socket
@@ -24,7 +21,6 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
-# matplotlib is optional; used to save loss plots
 import matplotlib.pyplot as plt
 
 # ----------------------------
@@ -213,6 +209,8 @@ class ATT_MADDPG:
         self.replay_buffer = ReplayBuffer()
         self.value_losses = []
         self.policy_losses = []
+        # reward tracking per episode
+        self.episode_rewards = []
 
     def reset_noise(self):
         for a in self.agents:
@@ -384,10 +382,26 @@ def save_loss_plot(maddpg, fname="att_maddpg_losses.png"):
     plt.savefig(fname)
     plt.close()
 
+def save_reward_plot(episode_rewards, fname="att_maddpg_rewards.png", ma_window=10):
+    if len(episode_rewards) == 0:
+        return
+    plt.figure(figsize=(10,5))
+    plt.plot(episode_rewards, label="Episode Reward")
+    if len(episode_rewards) >= ma_window:
+        cumsum = np.cumsum(np.insert(np.array(episode_rewards), 0, 0))
+        ma = (cumsum[ma_window:] - cumsum[:-ma_window]) / float(ma_window)
+        # align moving average to right position
+        ma_x = list(range(ma_window - 1, ma_window - 1 + len(ma)))
+        plt.plot(ma_x, ma, label=f"{ma_window}-ep MA")
+    plt.legend()
+    plt.xlabel("Episode")
+    plt.ylabel("Total Reward")
+    plt.title("ATT-MADDPG Episode Rewards")
+    plt.savefig(fname)
+    plt.close()
+
 def format_state(state):
     # Provide human readable snapshot (same mapping as Unity)
-    # 0: yaw,1:vel,2:ang_target,3:dist_target,4:ang_n1,5:dist_n1,6:ang_n2,7:dist_n2,
-    # 8-16: 9 sensors, 17:align_n1,18:align_n2
     return (f"Yaw:{state[0]:.1f},Vel:{state[1]:.2f},AngT:{state[2]:.1f},DistT:{state[3]:.1f},"
             f"DistN1:{state[5]:.1f},AlignN1:{state[17]:.2f},MinObs:{np.min(state[8:17]):.1f}")
 
@@ -404,6 +418,9 @@ def main():
         if success:
             print("Loaded models; running in inference (no training).")
     training_mode = not load_existing
+
+    # For reward plotting:
+    episode_rewards = maddpg.episode_rewards
 
     try:
         states, _, _ = unity.receive_state()
@@ -486,21 +503,26 @@ def main():
                 states, _, _ = unity.receive_state()
 
             print(f"Episode {episode} total_reward={total_reward:.2f}")
+            # record reward
+            episode_rewards.append(total_reward)
 
             if training_mode and episode % 10 == 0:
                 maddpg.save_model()
                 save_loss_plot(maddpg)
+                save_reward_plot(episode_rewards)
 
     except KeyboardInterrupt:
         print("Interrupted by user.")
         if training_mode:
             maddpg.save_model()
+            save_reward_plot(episode_rewards)
     finally:
         unity.close()
 
     if training_mode:
         save_loss_plot(maddpg)
-        print("Training finished. Loss plot saved.")
+        save_reward_plot(episode_rewards)
+        print("Training finished. Loss & reward plots saved.")
 
 if __name__ == "__main__":
     main()
