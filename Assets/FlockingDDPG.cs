@@ -3,93 +3,66 @@ using System.Net.Sockets;
 using System.Collections;
 using UnityEngine;
 
-public class FlockingDrones : MonoBehaviour
+// FlockingDDPG.cs
+// Attach to a Unity GameObject. Set 'drones' (array length NUM_DRONES) and 'target' in Inspector.
+// Protocol:
+//   Send to Python each step: for each drone: [19 floats state] + [1 float reward] + [1 float flag]
+//   Receive from Python: NUM_DRONES * ACTION_DIM floats
+//   Reset signal: first float == -99.0f
+
+public class FlockingDDPG : MonoBehaviour
 {
-    public GameObject[] drones; // Assign 3 drones in Unity Inspector
+    public GameObject[] drones; // assign NUM_DRONES in inspector
     public Transform target;
+    public int NUM_DRONES = 3;
     private TcpClient client;
     private NetworkStream stream;
-    private const int STATE_DIM = 17; // State dimension per drone
-    private const int ACTION_DIM = 2; // Action dimension per drone
-    private const int NUM_DRONES = 3; // Number of drones
 
-    private Vector3[] initialDronePositions;
-    private Quaternion[] initialDroneRotations;
-    private float[] prevDistToTarget; // To calculate reward
+    private const int STATE_DIM = 19; // now matches Python STATE_DIM
+    private const int ACTION_DIM = 2;
+    private const int FULL_DIM = STATE_DIM + 2; // state + reward + flag
+
+    private Vector3[] initialPositions;
+    private Quaternion[] initialRotations;
+    private float[] prevDistToTarget;
     private bool[] droneDone;
-    private bool[] droneDone;
 
-    private int terminationFlag = 0; // 0: running, 1: target reached, 2: collision
-    public float MAX_SPEED = 10f;          // tune based on environment
-    public float MAX_STEERING_DEG = 3f;    // max steering angle in degrees (reduced for smoother turns)
-
+    public float MAX_SPEED = 10f;
+    public float MAX_STEERING_DEG = 3f;
+    public float RAYCAST_RANGE = 40f;
 
     void Start()
     {
+        if (drones == null || drones.Length != NUM_DRONES)
+        {
+            Debug.LogError("Please assign exactly NUM_DRONES drones in inspector.");
+            return;
+        }
+
         prevDistToTarget = new float[NUM_DRONES];
         droneDone = new bool[NUM_DRONES];
-        droneDone = new bool[NUM_DRONES];
-        ConnectToPython();
+        initialPositions = new Vector3[NUM_DRONES];
+        initialRotations = new Quaternion[NUM_DRONES];
         StoreInitialPositions();
-        
-        // Send initial state ONCE with reward=0, done=0
-        float[] initialRewards = new float[NUM_DRONES]; // All zeros
-        int[] initialFlags = new int[NUM_DRONES];
-        SendStatesToPython(initialRewards, initialFlags);
-        
+        ConnectToPython();
+
+        // send initial state once (rewards=0 flags=0)
+        float[] zerosR = new float[NUM_DRONES];
+        int[] zerosF = new int[NUM_DRONES];
+        SendStatesToPython(zerosR, zerosF);
+
         StartCoroutine(CommunicationLoop());
-    }
-
-    void ResetDrones()
-    {
-        for (int i = 0; i < NUM_DRONES; i++)
-        {
-            Rigidbody rb = drones[i].GetComponent<Rigidbody>();
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            drones[i].transform.position = initialDronePositions[i];
-            
-            // Randomize rotation slightly to encourage diverse exploration
-            float randomY = UnityEngine.Random.Range(-180f, 180f);
-            drones[i].transform.rotation = Quaternion.Euler(0, randomY, 0);
-            droneDone[i] = false;
-            
-            CollisionDetector collisionDetector = drones[i].GetComponent<CollisionDetector>();
-            if (collisionDetector != null)
-            {
-                collisionDetector.HasCollided = false;
-            }
-
-            droneDone[i] = false;
-        }
-        terminationFlag = 0; // Reset termination flag
-        
-        // Reset prev distances
-        for (int i = 0; i < NUM_DRONES; i++) {
-            prevDistToTarget[i] = Vector3.Distance(drones[i].transform.position, target.position);
-        }
-    }
-
-    bool DroneAtTarget(int index)
-    {
-        return Vector3.Distance(drones[index].transform.position, target.position) <= 2.0f;
     }
 
     void StoreInitialPositions()
     {
-        initialDronePositions = new Vector3[NUM_DRONES];
-        initialDroneRotations = new Quaternion[NUM_DRONES];
         for (int i = 0; i < NUM_DRONES; i++)
         {
-            initialDronePositions[i] = drones[i].transform.position;
-            initialDroneRotations[i] = drones[i].transform.rotation;
+            initialPositions[i] = drones[i].transform.position;
+            initialRotations[i] = drones[i].transform.rotation;
             prevDistToTarget[i] = Vector3.Distance(drones[i].transform.position, target.position);
+            droneDone[i] = false;
         }
-    }
-
-    bool DroneAtTarget(int index)
-    {
-        return Vector3.Distance(drones[index].transform.position, target.position) <= 2.0f;
     }
 
     void ConnectToPython()
@@ -98,173 +71,207 @@ public class FlockingDrones : MonoBehaviour
         {
             client = new TcpClient("127.0.0.1", 5555);
             stream = client.GetStream();
-            Debug.Log("Connected to Python.");
+            Debug.Log("Connected to Python trainer.");
         }
         catch (Exception e)
         {
-            Debug.LogError("Failed to connect: " + e.Message);
+            Debug.LogError("Failed to connect to Python: " + e.Message);
         }
     }
 
-    // Returns the current state (17 floats) of the given drone.
+    // Build the 19-element state for a drone (matching mapping used in Python)
+    // 0: yaw (degrees)
+    // 1: speed (magnitude)
+    // 2: angle to target (signed degrees)
+    // 3: distance to target
+    // 4: angle to nearest neighbor 1
+    // 5: distance to nearest neighbor 1
+    // 6: angle to nearest neighbor 2
+    // 7: distance to nearest neighbor 2
+    // 8-16: 9 ray distances (sensor rays)
+    // 17: alignment with neighbor 1 (dot product of forward vectors)
+    // 18: alignment with neighbor 2
     float[] GetDroneState(GameObject drone)
     {
         Rigidbody rb = drone.GetComponent<Rigidbody>();
         float[] state = new float[STATE_DIM];
+
+        // yaw in degrees
         state[0] = drone.transform.eulerAngles.y;
+
+        // velocity magnitude
         state[1] = rb.velocity.magnitude;
+
         Vector3 toTarget = target.position - drone.transform.position;
-        // Use SignedAngle to provide directional context (left vs right)
         state[2] = Vector3.SignedAngle(drone.transform.forward, toTarget, Vector3.up);
         state[3] = toTarget.magnitude;
-        float minDist1 = float.MaxValue, minDist2 = float.MaxValue;
-        float angle1 = 0, angle2 = 0;
+
+        // find two nearest neighbors (excluding self)
+        float min1 = float.MaxValue, min2 = float.MaxValue;
+        Vector3 nearest1 = Vector3.zero, nearest2 = Vector3.zero;
+        GameObject nearestObj1 = null, nearestObj2 = null;
+
         foreach (GameObject other in drones)
         {
             if (other == drone) continue;
             Vector3 toOther = other.transform.position - drone.transform.position;
             float dist = toOther.magnitude;
-            float angle = Vector3.Angle(drone.transform.forward, toOther);
-            if (dist < minDist1)
+            if (dist < min1)
             {
-                minDist2 = minDist1;
-                angle2 = angle1;
-                minDist1 = dist;
-                angle1 = angle;
+                min2 = min1;
+                nearestObj2 = nearestObj1;
+                min1 = dist;
+                nearestObj1 = other;
             }
-            else if (dist < minDist2)
+            else if (dist < min2)
             {
-                minDist2 = dist;
-                angle2 = angle;
+                min2 = dist;
+                nearestObj2 = other;
             }
         }
-        state[4] = angle1;
-        state[5] = minDist1;
-        state[6] = angle2;
-        state[7] = minDist2;
+
+        if (nearestObj1 != null)
+        {
+            Vector3 toN1 = nearestObj1.transform.position - drone.transform.position;
+            state[4] = Vector3.SignedAngle(drone.transform.forward, toN1, Vector3.up);
+            state[5] = min1;
+        }
+        else
+        {
+            state[4] = 0f; state[5] = 100f;
+        }
+
+        if (nearestObj2 != null)
+        {
+            Vector3 toN2 = nearestObj2.transform.position - drone.transform.position;
+            state[6] = Vector3.SignedAngle(drone.transform.forward, toN2, Vector3.up);
+            state[7] = min2;
+        }
+        else
+        {
+            state[6] = 0f; state[7] = 100f;
+        }
+
+        // 9 raycasts around (like in test.py)
         for (int i = 0; i < 9; i++)
         {
-            Vector3 direction = Quaternion.Euler(0, i * 40 - 180, 0) * drone.transform.forward;
+            Vector3 dir = Quaternion.Euler(0, i * 40f - 180f, 0) * drone.transform.forward;
             RaycastHit hit;
-            if (Physics.Raycast(drone.transform.position, direction, out hit, 40f))
+            if (Physics.Raycast(drone.transform.position, dir, out hit, RAYCAST_RANGE))
             {
                 state[8 + i] = hit.distance;
             }
             else
             {
-                state[8 + i] = 40f;
+                state[8 + i] = RAYCAST_RANGE;
             }
         }
+
+        // alignment with nearest neighbours: dot product of forward vectors normalized (-1..1)
+        if (nearestObj1 != null)
+        {
+            Vector3 f1 = drone.transform.forward.normalized;
+            Vector3 fN1 = nearestObj1.transform.forward.normalized;
+            state[17] = Vector3.Dot(f1, fN1);
+        }
+        else state[17] = 0f;
+
+        if (nearestObj2 != null)
+        {
+            Vector3 f1 = drone.transform.forward.normalized;
+            Vector3 fN2 = nearestObj2.transform.forward.normalized;
+            state[18] = Vector3.Dot(f1, fN2);
+        }
+        else state[18] = 0f;
+
         return state;
     }
-    
-    float CalculateReward(int droneIndex, float[] currentState, int droneFlag, float[] actions)
+
+    float CalculateReward(int idx, float[] state, int flag, float[] actions)
     {
-        float curDist = currentState[3]; // Distance to target is at index 3
-        float prevDist = prevDistToTarget[droneIndex];
-        
-        // 1. Base movement reward (scaled down to keep values small)
-        float reward = (prevDist - curDist) * 30f;
-        
-        // 2. Target reached / Collision
-        if (droneFlag == 1) reward += 200f;
-        else if (droneFlag == 2) reward -= 50f;
-        
-        // 3. Flocking
-        float minDist1 = currentState[5]; // Min dist neighbor is at index 5
+        // Keep reward logic consistent with Python test.py variant
+        float curDist = state[3];
+        float prev = prevDistToTarget[idx];
+        float reward = (prev - curDist) * 30f;
+
+        if (flag == 1) reward += 200f;
+        else if (flag == 2) reward -= 50f;
+
+        float minDist1 = state[5];
         if (minDist1 < 5f) reward -= 5f;
         else if (minDist1 >= 10f && minDist1 <= 30f) reward += 1f;
-        
-        // 4. Obstacles indices 8 to 16 (9 rays)
-        float minObstacle = 40f;
-        for (int i = 8; i <= 16; i++) {
-            if (currentState[i] < minObstacle) minObstacle = currentState[i];
+
+        float minObstacle = RAYCAST_RANGE;
+        for (int i = 8; i <= 16; i++)
+        {
+            if (state[i] < minObstacle) minObstacle = state[i];
         }
         if (minObstacle < 10f) reward -= 2f * (10f - minObstacle);
-        
-        // 5. Step penalty
-        reward -= 0.2f; 
-        
-        // 6. Action Smoothness / Steering Penalty
-        // actions[0] is steering ([-1,1])
-        // Penalize sharp turns to avoid "aggressive rotating"
+
+        reward -= 0.2f;
         if (actions != null)
         {
-            float steering = actions[0];
-            reward -= Mathf.Abs(steering) * 0.1f;
+            float steer = actions[0];
+            reward -= Mathf.Abs(steer) * 0.1f;
         }
-        
-        // 7. Movement incentive
-        // If velocity (index 1) is very low, penalize slightly
-        float velocity = currentState[1];
-        if (velocity < 0.5f) reward -= 1.0f;
+        float vel = state[1];
+        if (vel < 0.5f) reward -= 1.0f;
 
         return reward;
     }
 
-    // Sends the states of all drones to Python with individual termination flags and rewards
-    // Protocol: [State(17), Reward(1), Flag(1)] * NUM_DRONES
     void SendStatesToPython(float[] rewards, int[] flags)
     {
-        int packetSize = STATE_DIM + 2; 
-        float[] allData = new float[NUM_DRONES * packetSize];
-        
+        int packetSize = FULL_DIM; // 21
+        float[] outArr = new float[NUM_DRONES * packetSize];
         for (int i = 0; i < NUM_DRONES; i++)
         {
-            float[] state = GetDroneState(drones[i]);
-            Array.Copy(state, 0, allData, i * packetSize, STATE_DIM);
-            
-            allData[i * packetSize + STATE_DIM] = rewards[i];
-            allData[i * packetSize + STATE_DIM + 1] = flags[i];
+            float[] st = GetDroneState(drones[i]);
+            Array.Copy(st, 0, outArr, i * packetSize, STATE_DIM);
+            outArr[i * packetSize + STATE_DIM] = rewards[i];
+            outArr[i * packetSize + STATE_DIM + 1] = flags[i];
         }
-        
-        byte[] data = new byte[allData.Length * 4];
-        Buffer.BlockCopy(allData, 0, data, 0, data.Length);
-        stream.Write(data, 0, data.Length);
+        byte[] bytes = new byte[outArr.Length * 4];
+        Buffer.BlockCopy(outArr, 0, bytes, 0, bytes.Length);
+        stream.Write(bytes, 0, bytes.Length);
         stream.Flush();
     }
 
-    // Receives actions for all drones from Python.
     float[] ReceiveActionsFromPython()
     {
         int expected = NUM_DRONES * ACTION_DIM * 4;
         byte[] data = new byte[expected];
-        int bytesRead = 0;
-        while (bytesRead < expected)
+        int read = 0;
+        while (read < expected)
         {
-            int read = stream.Read(data, bytesRead, expected - bytesRead);
-            if (read == 0)
+            int r = stream.Read(data, read, expected - read);
+            if (r == 0)
             {
                 Debug.LogError("Python closed connection");
                 return null;
             }
-            bytesRead += read;
+            read += r;
         }
         float[] actions = new float[NUM_DRONES * ACTION_DIM];
         Buffer.BlockCopy(data, 0, actions, 0, expected);
         return actions;
     }
 
-
-    // Applies actions to all drones.
     void ApplyActionsToDrones(float[] actions)
     {
-        if (actions == null) return;  // handle disconnect
+        if (actions == null) return;
 
         for (int i = 0; i < NUM_DRONES; i++)
         {
-            if (droneDone[i])
-                continue;
+            if (droneDone[i]) continue;
 
-            // store prev dist for reward calc
             prevDistToTarget[i] = Vector3.Distance(drones[i].transform.position, target.position);
-            
-            float steering_norm = actions[i * ACTION_DIM + 0]; // [-1,1]
-            float throttle_norm = actions[i * ACTION_DIM + 1]; // [-1,1] - Allow backward
 
-            // clip to safe ranges just in case
+            float steering_norm = actions[i * ACTION_DIM + 0];
+            float throttle_norm = actions[i * ACTION_DIM + 1];
+
             steering_norm = Mathf.Clamp(steering_norm, -1f, 1f);
-            throttle_norm = Mathf.Clamp(throttle_norm, -1f, 1f); // Allow negative
+            throttle_norm = Mathf.Clamp(throttle_norm, -1f, 1f);
 
             ApplyActionToDrone(drones[i], steering_norm, throttle_norm);
         }
@@ -273,134 +280,131 @@ public class FlockingDrones : MonoBehaviour
     void ApplyActionToDrone(GameObject drone, float steering_norm, float throttle_norm)
     {
         Rigidbody rb = drone.GetComponent<Rigidbody>();
-        // Steering: convert [-1,1] -> [-MAX_STEERING_DEG, MAX_STEERING_DEG]
-        float targetTurnAngle = steering_norm * MAX_STEERING_DEG;
+        float targetTurn = steering_norm * MAX_STEERING_DEG;
+        float appliedSpeed = throttle_norm * MAX_SPEED;
 
-        // throttle_norm is [-1,1] -> scale to speed/accel
-        float appliedForwardSpeed = throttle_norm * MAX_SPEED;
+        // Smooth rotation via coroutine
+        StartCoroutine(RotateDroneOverTime(drone, targetTurn, 0.05f));
 
-        // rotate over time (as before)
-        StartCoroutine(RotateDroneOverTime(drone, targetTurnAngle, 0.05f));
-
-        // apply forward acceleration toward desired forward speed
-        // Option 1: add acceleration proportional to desired speed:
-        Vector3 desiredVelocity = drone.transform.forward * appliedForwardSpeed;
-        Vector3 accel = (desiredVelocity - rb.velocity);
-        // Optionally cap acceleration
+        Vector3 desiredVel = drone.transform.forward * appliedSpeed;
+        Vector3 accel = (desiredVel - rb.velocity);
         float maxAccel = 10f;
         if (accel.magnitude > maxAccel) accel = accel.normalized * maxAccel;
         rb.AddForce(accel, ForceMode.Acceleration);
     }
 
-    private IEnumerator RotateDroneOverTime(GameObject drone, float targetAngle, float duration)
+    System.Collections.IEnumerator RotateDroneOverTime(GameObject drone, float targetAngle, float duration)
     {
-        float elapsedTime = 0f;
-        Quaternion startRotation = drone.transform.rotation;
-        Quaternion targetRotation = startRotation * Quaternion.Euler(0, targetAngle, 0);
-        while (elapsedTime < duration)
+        float elapsed = 0f;
+        Quaternion start = drone.transform.rotation;
+        Quaternion targetRot = start * Quaternion.Euler(0, targetAngle, 0);
+        while (elapsed < duration)
         {
-            drone.transform.rotation = Quaternion.Slerp(startRotation, targetRotation, elapsedTime / duration);
-            elapsedTime += Time.deltaTime;
+            drone.transform.rotation = Quaternion.Slerp(start, targetRot, elapsed / duration);
+            elapsed += Time.deltaTime;
             yield return null;
         }
-        drone.transform.rotation = targetRotation;
+        drone.transform.rotation = targetRot;
     }
 
-    // Checks termination conditions (collision or target reached).
-    void CheckTerminationConditions()
+    void ResetDrones()
     {
-        bool allDone = true;
-
         for (int i = 0; i < NUM_DRONES; i++)
         {
-            CollisionDetector detector = drones[i].GetComponent<CollisionDetector>();
-            if (detector != null && detector.HasCollided)
+            Rigidbody rb = drones[i].GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                droneDone[i] = true;
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
+            drones[i].transform.position = initialPositions[i];
+            drones[i].transform.rotation = initialRotations[i];
 
-            if (!droneDone[i] && DroneAtTarget(i))
-            {
-                droneDone[i] = true;
-            }
+            // small random yaw for exploration
+            float randomY = UnityEngine.Random.Range(-30f, 30f);
+            drones[i].transform.rotation = Quaternion.Euler(0, drones[i].transform.eulerAngles.y + randomY, 0);
 
-            if (!droneDone[i])
-            {
-                allDone = false;
-            }
-        }
+            droneDone[i] = false;
 
-        if (allDone)
-        {
-            terminationFlag = 1;
-        }
-        else
-        {
-            terminationFlag = 0;
+            // reset prev distance
+            prevDistToTarget[i] = Vector3.Distance(drones[i].transform.position, target.position);
+
+            // Reset collision detectors if present
+            var cd = drones[i].GetComponent<CollisionDetector>();
+            if (cd != null) cd.HasCollided = false;
         }
     }
 
-    bool CheckCollision()
+    bool DroneAtTarget(int index)
     {
-        foreach (GameObject drone in drones)
+        return Vector3.Distance(drones[index].transform.position, target.position) <= 2.0f;
+    }
+
+    void CheckTerminationFlags()
+    {
+        bool allDone = true;
+        for (int i = 0; i < NUM_DRONES; i++)
         {
-            if (drone.GetComponent<CollisionDetector>().HasCollided)
-                return true;
+            var cd = drones[i].GetComponent<CollisionDetector>();
+            if (cd != null && cd.HasCollided) droneDone[i] = true;
+            if (!droneDone[i] && DroneAtTarget(i)) droneDone[i] = true;
+            if (!droneDone[i]) allDone = false;
+        }
+    }
+
+    bool AnyCollision()
+    {
+        foreach (var d in drones)
+        {
+            var cd = d.GetComponent<CollisionDetector>();
+            if (cd != null && cd.HasCollided) return true;
         }
         return false;
     }
 
-    bool CheckTargetReached()
+    bool AllAtTarget()
     {
-        foreach (GameObject drone in drones)
+        foreach (var d in drones)
         {
-            if (Vector3.Distance(drone.transform.position, target.position) > 2.0f)
-                return false;
+            if (Vector3.Distance(d.transform.position, target.position) > 2.0f) return false;
         }
         return true;
     }
 
-    IEnumerator CommunicationLoop()
+    System.Collections.IEnumerator CommunicationLoop()
     {
         while (true)
         {
-            // 1. Receive actions from Python
             float[] actions = ReceiveActionsFromPython();
-            if (actions == null) yield break; // disconnected
+            if (actions == null) yield break;
 
-            // Special reset signal from Python (first value -99)
+            // Reset signal
             if (actions.Length > 0 && Mathf.Approximately(actions[0], -99f))
             {
                 ResetDrones();
+                // send initial zero state to python
                 SendStatesToPython(new float[NUM_DRONES], new int[NUM_DRONES]);
+                yield return null;
                 continue;
             }
 
-            // 2. Apply actions to drones (and store prev dists)
             ApplyActionsToDrones(actions);
 
-            // 3. Wait for physics update
+            // Wait for Unity physics step
             yield return new WaitForFixedUpdate();
 
-            // 4. Check termination conditions AFTER physics update
-            CheckTerminationConditions();
-            
-            // 5. Calculate Rewards based on new state
-            float[] rewards = new float[NUM_DRONES];
-            int[] droneFlags = new int[NUM_DRONES];
-            for(int i=0; i<NUM_DRONES; i++) {
-                float[] state = GetDroneState(drones[i]);
-                
-                // Extract action for this drone to pass to reward function
-                float[] droneAction = new float[ACTION_DIM];
-                if (actions != null)
-                    Array.Copy(actions, i * ACTION_DIM, droneAction, 0, ACTION_DIM);
-                else 
-                    droneAction = null;
+            // Evaluate termination after physics update
+            CheckTerminationFlags();
 
+            // Prepare rewards and flags for next state
+            float[] rewards = new float[NUM_DRONES];
+            int[] flags = new int[NUM_DRONES];
+            for (int i = 0; i < NUM_DRONES; i++)
+            {
+                float[] st = GetDroneState(drones[i]);
                 int flag = 0;
-                CollisionDetector detector = drones[i].GetComponent<CollisionDetector>();
-                bool collided = detector != null && detector.HasCollided;
+                var cd = drones[i].GetComponent<CollisionDetector>();
+                bool collided = (cd != null && cd.HasCollided);
                 if (DroneAtTarget(i))
                 {
                     flag = 1;
@@ -411,19 +415,25 @@ public class FlockingDrones : MonoBehaviour
                     flag = 2;
                     droneDone[i] = true;
                 }
+                flags[i] = flag;
 
-                droneFlags[i] = flag;
-                rewards[i] = CalculateReward(i, state, flag, droneAction);
+                // Extract action for this drone from the actions array (if available)
+                float[] droneAction = new float[ACTION_DIM];
+                Array.Copy(actions, i * ACTION_DIM, droneAction, 0, ACTION_DIM);
+
+                rewards[i] = CalculateReward(i, st, flag, droneAction);
             }
-            
-            // 6. Send the NEXT state, Reward, and Flag
-            SendStatesToPython(rewards, droneFlags);
 
-            // 7. If episode ended, reset and send initial state for next episode
-            if (terminationFlag != 0)
+            // Send next state + rewards + flags
+            SendStatesToPython(rewards, flags);
+
+            // If termination occurred for the whole episode (all Done), reset after sending
+            bool allDone = true;
+            for (int i = 0; i < NUM_DRONES; i++) if (!droneDone[i]) allDone = false;
+            if (allDone)
             {
+                // Reset after sending final states
                 ResetDrones();
-                // Send new initial state (Rewards=0)
                 SendStatesToPython(new float[NUM_DRONES], new int[NUM_DRONES]);
             }
         }
@@ -431,7 +441,7 @@ public class FlockingDrones : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        stream.Close();
-        client.Close();
+        if (stream != null) stream.Close();
+        if (client != null) client.Close();
     }
 }

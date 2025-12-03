@@ -1,69 +1,96 @@
+#!/usr/bin/env python3
+"""
+ATT-MADDPG trainer adapted from test.py for Unity communication.
+Protocol:
+  - Unity -> Python: for each drone: [19 floats state] + [1 float reward] + [1 float flag]
+    -> total floats per step = NUM_DRONES * 21
+  - Python -> Unity: actions flattened: NUM_DRONES * ACTION_DIM floats
+  - Reset signal: Python sends float -99.0 as first float of action packet (length NUM_DRONES * ACTION_DIM).
+This file contains:
+  - Actor, AttentionCritic, Agent classes
+  - ATT_MADDPG training loop
+  - UnitySocket class (TCP server)
+"""
+import os
+import socket
+import struct
+import datetime
+import random
+from collections import deque
+
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-import random
-from collections import deque
-import socket
-import struct
-import matplotlib.pyplot as plt
-import os
-import datetime
 
-# Hyperparameters
+# matplotlib is optional; used to save loss plots
+import matplotlib.pyplot as plt
+
+# ----------------------------
+# Hyperparameters (tuneable)
+# ----------------------------
 MAX_MEMORY = 100000
-BATCH_SIZE = 256        # Increased from 64 for stability
+BATCH_SIZE = 256
 GAMMA = 0.99
 TAU = 0.01
-ACTOR_LR = 0.0001       # Reduced from 0.001 to prevent policy collapse
-CRITIC_LR = 0.001
+ACTOR_LR = 1e-4
+CRITIC_LR = 1e-3
 NUM_DRONES = 3
-STATE_DIM = 17  # Excludes reward and termination flag
-FULL_STATE_DIM = 19  # Includes reward and termination flag (17+1+1)
+STATE_DIM = 19   # per test.py / Unity state (excludes reward and flag)
+FULL_STATE_DIM = STATE_DIM + 2  # includes reward and flag
 ACTION_DIM = 2
 HIDDEN_DIM = 64
 NUM_EPISODES = 1000
 MAX_STEPS = 500
-MODEL_DIR = "saved_models"
-LOG_FILE = "training_log.txt"
+MODEL_DIR = "saved_models_att"
+LOG_FILE = "training_log_att.txt"
 
-# Exploration settings
-WARMUP_EPISODES = 50    # Pure exploration phase
-NOISE_START = 1.0       # High initial noise
+WARMUP_EPISODES = 50
+NOISE_START = 1.0
 NOISE_END = 0.1
 NOISE_DECAY_EPISODES = 500
 
-# Ensure model directory exists
 if not os.path.exists(MODEL_DIR):
     os.makedirs(MODEL_DIR)
 
-# Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# ----------------------------
+# Utility: tau update
+# ----------------------------
+def tau_update(target, source, tau):
+    return target * (1 - tau) + source * tau
+
+# ----------------------------
+# Replay buffer
+# ----------------------------
 class ReplayBuffer:
     def __init__(self, max_size=MAX_MEMORY):
         self.buffer = deque(maxlen=max_size)
 
     def add(self, obs, act, rew, next_obs, done):
+        # obs: (NUM_DRONES, STATE_DIM)
         self.buffer.append((obs, act, rew, next_obs, done))
 
     def sample(self, batch_size):
         batch = random.sample(self.buffer, batch_size)
         obs, act, rew, next_obs, done = zip(*batch)
         return (
-            np.array(obs),
-            np.array(act),
-            np.array(rew),
-            np.array(next_obs),
-            np.array(done)
+            np.array(obs, dtype=np.float32),      # (B, N, S)
+            np.array(act, dtype=np.float32),      # (B, N, A)
+            np.array(rew, dtype=np.float32),      # (B, N)
+            np.array(next_obs, dtype=np.float32), # (B, N, S)
+            np.array(done, dtype=np.float32)      # (B, N)
         )
 
     def size(self):
         return len(self.buffer)
 
+# ----------------------------
+# OU Noise for exploration
+# ----------------------------
 class OUNoise:
-    """Ornstein-Uhlenbeck process for temporally correlated noise."""
     def __init__(self, action_dim, mu=0.0, theta=0.15, sigma=0.3):
         self.action_dim = action_dim
         self.mu = mu
@@ -81,22 +108,25 @@ class OUNoise:
         self.state = x + dx
         return self.state
 
+# ----------------------------
+# Networks
+# ----------------------------
 class Actor(nn.Module):
     def __init__(self, state_dim, action_dim):
         super(Actor, self).__init__()
         self.fc1 = nn.Linear(state_dim, HIDDEN_DIM)
         self.fc2 = nn.Linear(HIDDEN_DIM, HIDDEN_DIM)
         self.fc3 = nn.Linear(HIDDEN_DIM, action_dim)
-        
+
     def forward(self, state):
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
-        # Output in [-1, 1] for both dimensions
-        return torch.tanh(self.fc3(x))
+        return torch.tanh(self.fc3(x))  # outputs in [-1,1]
 
 class AttentionCritic(nn.Module):
     def __init__(self, state_dim, action_dim, hidden_dim=HIDDEN_DIM):
         super(AttentionCritic, self).__init__()
+        # ego encoder and other encoder operate on (state + action)
         self.ego_encoder = nn.Sequential(
             nn.Linear(state_dim + action_dim, hidden_dim),
             nn.ReLU()
@@ -112,37 +142,50 @@ class AttentionCritic(nn.Module):
         self.fc2 = nn.Linear(hidden_dim, 1)
 
     def forward(self, ego_state, ego_action, others_states, others_actions):
+        # ego_state: (B, S)
+        # ego_action: (B, A)
+        # others_states: (B, N-1, S)
+        # others_actions: (B, N-1, A)
         batch_size = ego_state.shape[0]
-        ego_input = torch.cat([ego_state, ego_action], dim=1)
-        ego_encoded = self.ego_encoder(ego_input)
-        others_input = torch.cat([others_states, others_actions], dim=2)
-        others_input_flat = others_input.view(-1, others_input.shape[2])
-        others_encoded_flat = self.other_encoder(others_input_flat)
-        others_encoded = others_encoded_flat.view(batch_size, -1, others_encoded_flat.shape[1])
-        query = self.query(ego_encoded).unsqueeze(1)
-        keys = self.key(others_encoded)
-        values = self.value(others_encoded)
-        scores = torch.bmm(query, keys.transpose(1, 2))
-        weights = F.softmax(scores / np.sqrt(others_encoded.shape[-1]), dim=2)
-        attention_output = torch.bmm(weights, values).squeeze(1)
-        combined = torch.cat([ego_encoded, attention_output], dim=1)
+        ego_input = torch.cat([ego_state, ego_action], dim=1)  # (B, S+A)
+        ego_encoded = self.ego_encoder(ego_input)            # (B, H)
+
+        # flatten others for encoding
+        others_input = torch.cat([others_states, others_actions], dim=2)  # (B, N-1, S+A)
+        others_flat = others_input.view(-1, others_input.shape[2])       # ((B*(N-1)), S+A)
+        others_encoded_flat = self.other_encoder(others_flat)            # ((B*(N-1)), H)
+        others_encoded = others_encoded_flat.view(batch_size, -1, others_encoded_flat.shape[1])  # (B, N-1, H)
+
+        query = self.query(ego_encoded).unsqueeze(1)   # (B,1,H)
+        keys = self.key(others_encoded)               # (B, N-1, H)
+        values = self.value(others_encoded)           # (B, N-1, H)
+
+        # attention scores & output
+        scores = torch.bmm(query, keys.transpose(1, 2))  # (B,1,N-1)
+        dim_k = others_encoded.shape[-1]
+        weights = F.softmax(scores / np.sqrt(dim_k), dim=2)  # (B,1,N-1)
+        attention_output = torch.bmm(weights, values).squeeze(1)  # (B,H)
+
+        combined = torch.cat([ego_encoded, attention_output], dim=1)  # (B, 2H)
         x = F.relu(self.fc1(combined))
         q_value = self.fc2(x)
         return q_value
 
+# ----------------------------
+# Agent container (actor + critic + target nets + optimizers)
+# ----------------------------
 class Agent:
-    def __init__(self, state_dim, action_dim, num_drones):
+    def __init__(self, state_dim, action_dim):
         self.actor = Actor(state_dim, action_dim).to(device)
         self.target_actor = Actor(state_dim, action_dim).to(device)
         self.target_actor.load_state_dict(self.actor.state_dict())
         self.actor_optimizer = optim.Adam(self.actor.parameters(), lr=ACTOR_LR)
-        
+
         self.critic = AttentionCritic(state_dim, action_dim).to(device)
         self.target_critic = AttentionCritic(state_dim, action_dim).to(device)
         self.target_critic.load_state_dict(self.critic.state_dict())
         self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=CRITIC_LR)
-        
-        # Initialize OU Noise
+
         self.noise = OUNoise(action_dim)
 
     def reset_noise(self):
@@ -153,81 +196,77 @@ class Agent:
         torch.save(self.critic.state_dict(), os.path.join(path, f"agent_{index}_critic.pth"))
 
     def load(self, path, index):
-        self.actor.load_state_dict(torch.load(os.path.join(path, f"agent_{index}_actor.pth")))
-        self.critic.load_state_dict(torch.load(os.path.join(path, f"agent_{index}_critic.pth")))
+        self.actor.load_state_dict(torch.load(os.path.join(path, f"agent_{index}_actor.pth"), map_location=device))
+        self.critic.load_state_dict(torch.load(os.path.join(path, f"agent_{index}_critic.pth"), map_location=device))
         self.target_actor.load_state_dict(self.actor.state_dict())
         self.target_critic.load_state_dict(self.critic.state_dict())
 
+# ----------------------------
+# ATT-MADDPG manager
+# ----------------------------
 class ATT_MADDPG:
     def __init__(self, num_drones, state_dim, action_dim):
         self.num_drones = num_drones
         self.state_dim = state_dim
         self.action_dim = action_dim
-        self.agents = [Agent(state_dim, action_dim, num_drones) for _ in range(num_drones)]
+        self.agents = [Agent(state_dim, action_dim) for _ in range(num_drones)]
         self.replay_buffer = ReplayBuffer()
         self.value_losses = []
         self.policy_losses = []
 
     def reset_noise(self):
-        for agent in self.agents:
-            agent.reset_noise()
+        for a in self.agents:
+            a.reset_noise()
 
     def select_actions(self, states, noise_scale=0.0):
-        """
-        states: np.array shape (NUM_DRONES, state_dim)
-        Returns: numpy array shape (NUM_DRONES, ACTION_DIM) with values in [-1, 1]
-        """
+        # states: (N, S) numpy
         actions = []
         for i, agent in enumerate(self.agents):
-            state = torch.FloatTensor(states[i]).unsqueeze(0).to(device)  # (1, S)
-            raw_action = agent.actor(state).detach().cpu().numpy()[0]     # in [-1,1]
-            
-            # Add OU exploration noise
+            s = torch.FloatTensor(states[i]).unsqueeze(0).to(device)  # (1,S)
+            raw = agent.actor(s).detach().cpu().numpy()[0]  # (A,)
             if noise_scale > 0:
-                noise = agent.noise.sample() * noise_scale
-                raw_action += noise
-                
-            # Clip to valid range
-            action = np.clip(raw_action, -1.0, 1.0)
-            actions.append(action)
-            
+                raw += agent.noise.sample() * noise_scale
+            actions.append(np.clip(raw, -1.0, 1.0))
         return np.array(actions, dtype=np.float32)
 
     def update(self):
         if self.replay_buffer.size() < BATCH_SIZE:
             return
         obs, act, rew, next_obs, done = self.replay_buffer.sample(BATCH_SIZE)
-        obs = torch.FloatTensor(obs).to(device)
-        act = torch.FloatTensor(act).to(device)
-        rew = torch.FloatTensor(rew).to(device)
-        next_obs = torch.FloatTensor(next_obs).to(device)
-        done = torch.FloatTensor(done).to(device)
+        # Convert to tensors:
+        obs = torch.FloatTensor(obs).to(device)           # (B, N, S)
+        act = torch.FloatTensor(act).to(device)           # (B, N, A)
+        rew = torch.FloatTensor(rew).to(device)           # (B, N)
+        next_obs = torch.FloatTensor(next_obs).to(device) # (B, N, S)
+        done = torch.FloatTensor(done).to(device)         # (B, N)
+
+        B = obs.shape[0]
+        N = self.num_drones
 
         for i, agent in enumerate(self.agents):
+            # Build next actions for all agents using target actors
             next_actions = []
             for j, other_agent in enumerate(self.agents):
-                # Get target action
-                raw_next_action = other_agent.target_actor(next_obs[:, j, :])
-                steering = raw_next_action[:, 0:1]
-                throttle = raw_next_action[:, 1:2] 
-                next_actions.append(torch.cat([steering, throttle], dim=1))
-                
-            next_actions = torch.stack(next_actions, dim=1)
-            
-            target_ego_state = next_obs[:, i, :]
-            target_ego_action = next_actions[:, i, :]
-            target_others_states = torch.cat([next_obs[:, :i, :], next_obs[:, i+1:, :]], dim=1)
-            target_others_actions = torch.cat([next_actions[:, :i, :], next_actions[:, i+1:, :]], dim=1)
-            
+                next_a = other_agent.target_actor(next_obs[:, j, :])  # (B, A)
+                next_actions.append(next_a)
+            next_actions = torch.stack(next_actions, dim=1)  # (B, N, A)
+
+            target_ego_state = next_obs[:, i, :]             # (B, S)
+            target_ego_action = next_actions[:, i, :]        # (B, A)
+            # others
+            target_others_states = torch.cat([next_obs[:, :i, :], next_obs[:, i+1:, :]], dim=1)   # (B, N-1, S)
+            target_others_actions = torch.cat([next_actions[:, :i, :], next_actions[:, i+1:, :]], dim=1) # (B, N-1, A)
+
             with torch.no_grad():
                 target_q = agent.target_critic(target_ego_state, target_ego_action, target_others_states, target_others_actions)
                 y = rew[:, i].unsqueeze(1) + GAMMA * target_q * (1 - done[:, i].unsqueeze(1))
-            
+
+            # Current Q
             ego_state = obs[:, i, :]
-            ego_action = act[:, i, :] 
+            ego_action = act[:, i, :]
             others_states = torch.cat([obs[:, :i, :], obs[:, i+1:, :]], dim=1)
             others_actions = torch.cat([act[:, :i, :], act[:, i+1:, :]], dim=1)
-            
+
             current_q = agent.critic(ego_state, ego_action, others_states, others_actions)
             critic_loss = F.mse_loss(current_q, y)
             agent.critic_optimizer.zero_grad()
@@ -236,17 +275,16 @@ class ATT_MADDPG:
             agent.critic_optimizer.step()
             self.value_losses.append(critic_loss.item())
 
-            # Actor Update
-            raw_curr_pol = agent.actor(ego_state)
-            curr_pol_out = raw_curr_pol
-            
-            actor_loss = -agent.critic(ego_state, curr_pol_out, others_states, others_actions).mean()
+            # Actor update
+            raw_act = agent.actor(ego_state)
+            actor_loss = -agent.critic(ego_state, raw_act, others_states, others_actions).mean()
             agent.actor_optimizer.zero_grad()
             actor_loss.backward()
             torch.nn.utils.clip_grad_norm_(agent.actor.parameters(), 0.5)
             agent.actor_optimizer.step()
             self.policy_losses.append(actor_loss.item())
 
+            # Soft update targets
             for target_param, param in zip(agent.target_actor.parameters(), agent.actor.parameters()):
                 target_param.data.copy_(tau_update(target_param.data, param.data, TAU))
             for target_param, param in zip(agent.target_critic.parameters(), agent.critic.parameters()):
@@ -255,208 +293,214 @@ class ATT_MADDPG:
     def save_model(self):
         for i, agent in enumerate(self.agents):
             agent.save(MODEL_DIR, i)
-        print("Model saved successfully.")
+        print("Saved agents to", MODEL_DIR)
 
     def load_model(self):
         for i, agent in enumerate(self.agents):
             try:
                 agent.load(MODEL_DIR, i)
-            except FileNotFoundError:
-                print(f"No saved model found for agent {i}, starting from scratch.")
+            except Exception as e:
+                print(f"Failed loading agent {i}: {e}")
                 return False
-        print("Model loaded successfully.")
+        print("Loaded models from", MODEL_DIR)
         return True
 
-def tau_update(target, source, tau):
-    return target * (1 - tau) + source * tau
-
+# ----------------------------
+# Unity socket server
+# ----------------------------
 class UnitySocket:
-    def __init__(self, host='127.0.0.1', port=5555):
+    def __init__(self, host='127.0.0.1', port=5555, num_drones=NUM_DRONES):
+        self.num_drones = num_drones
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # allow quick restart
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((host, port))
         self.sock.listen(1)
-        print('Waiting for Unity connection...')
+        print("Waiting for Unity connection on port", port, "...")
         self.conn, _ = self.sock.accept()
-        print('Connected to Unity')
+        print("Unity connected.")
 
     def receive_state(self):
+        # Expect num_drones * FULL_STATE_DIM floats (each float = 4 bytes)
+        expected = self.num_drones * FULL_STATE_DIM * 4
         data = b''
-        expected = NUM_DRONES * FULL_STATE_DIM * 4
         while len(data) < expected:
             packet = self.conn.recv(expected - len(data))
             if not packet:
                 return None, None, None
             data += packet
-        fmt_recv = '<' + 'f' * (NUM_DRONES * FULL_STATE_DIM)
-        state_flat = struct.unpack(fmt_recv, data)
-        all_data = np.array(state_flat).reshape(NUM_DRONES, FULL_STATE_DIM)
-        states = all_data[:, :STATE_DIM]
-        rewards = all_data[:, STATE_DIM]
-        flags = all_data[:, STATE_DIM+1]
+        # unpack as little-endian floats
+        fmt = '<' + 'f' * (self.num_drones * FULL_STATE_DIM)
+        flat = struct.unpack(fmt, data)
+        arr = np.array(flat, dtype=np.float32).reshape(self.num_drones, FULL_STATE_DIM)
+        states = arr[:, :STATE_DIM]      # (N, S)
+        rewards = arr[:, STATE_DIM]      # (N,)
+        flags = arr[:, STATE_DIM + 1]    # (N,)
         return states, rewards, flags
 
     def send_action(self, actions):
-        actions_flat = actions.flatten().tolist()
-        fmt_send = '<' + 'f' * len(actions_flat)
-        data = struct.pack(fmt_send, *actions_flat)
+        # actions shape (N, A)
+        flat = actions.flatten().tolist()
+        fmt = '<' + 'f' * len(flat)
+        data = struct.pack(fmt, *flat)
         self.conn.sendall(data)
 
     def send_reset(self):
-        reset_actions = [-99.0] * (NUM_DRONES * ACTION_DIM)
-        fmt_send = '<' + 'f' * len(reset_actions)
-        data = struct.pack(fmt_send, *reset_actions)
+        reset_actions = [-99.0] * (self.num_drones * ACTION_DIM)
+        fmt = '<' + 'f' * len(reset_actions)
+        data = struct.pack(fmt, *reset_actions)
         self.conn.sendall(data)
 
     def close(self):
-        if self.conn:
+        try:
             self.conn.close()
-        self.sock.close()
+        except:
+            pass
+        try:
+            self.sock.close()
+        except:
+            pass
 
-def log_training(episode, steps, total_reward, status, states_info=None):
+# ----------------------------
+# Logging and plotting
+# ----------------------------
+def log_training(episode, steps, total_reward, status, state_snapshot=None):
     with open(LOG_FILE, "a") as f:
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        f.write(f"[{timestamp}] Episode: {episode}, Steps: {steps}, Total Reward: {total_reward:.2f}, Status: {status}\n")
-        if states_info:
-             f.write(f"  State Snapshot (Agent 0): {states_info}\n")
+        ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        f.write(f"[{ts}] Episode:{episode}, Steps:{steps}, TotalReward:{total_reward:.2f}, Status:{status}\n")
+        if state_snapshot is not None:
+            f.write(f"  Snapshot (agent0): {state_snapshot}\n")
 
-def save_loss_plot(maddpg, filename="att_maddpg_losses.png"):
+def save_loss_plot(maddpg, fname="att_maddpg_losses.png"):
     if len(maddpg.value_losses) == 0:
         return
-    plt.figure(figsize=(12, 6))
-    plt.plot(maddpg.value_losses, label="Critic Loss")
-    plt.plot(maddpg.policy_losses, label="Actor Loss")
+    plt.figure(figsize=(10,5))
+    plt.plot(maddpg.value_losses, label="critic")
+    plt.plot(maddpg.policy_losses, label="actor")
     plt.legend()
-    plt.xlabel("Training Steps")
+    plt.xlabel("Training updates")
     plt.ylabel("Loss")
-    plt.title("ATT-MADDPG Loss Curves")
-    plt.savefig(filename)
+    plt.title("ATT-MADDPG losses")
+    plt.savefig(fname)
     plt.close()
 
 def format_state(state):
-    # state: [17]
-    # 0: yaw, 1: vel, 2: angle_target, 3: dist_target, 4: ang_n1, 5: dist_n1, 6: ang_n2, 7: dist_n2, 8-16: sensors
-    return (f"Yaw:{state[0]:.1f}, Vel:{state[1]:.2f}, AngTarg:{state[2]:.1f}, DistTarg:{state[3]:.1f}, "
-            f"DistN1:{state[5]:.1f}, DistN2:{state[7]:.1f}, MinObs:{np.min(state[8:]):.1f}")
+    # Provide human readable snapshot (same mapping as Unity)
+    # 0: yaw,1:vel,2:ang_target,3:dist_target,4:ang_n1,5:dist_n1,6:ang_n2,7:dist_n2,
+    # 8-16: 9 sensors, 17:align_n1,18:align_n2
+    return (f"Yaw:{state[0]:.1f},Vel:{state[1]:.2f},AngT:{state[2]:.1f},DistT:{state[3]:.1f},"
+            f"DistN1:{state[5]:.1f},AlignN1:{state[17]:.2f},MinObs:{np.min(state[8:17]):.1f}")
 
+# ----------------------------
+# Main training loop
+# ----------------------------
 def main():
     maddpg = ATT_MADDPG(NUM_DRONES, STATE_DIM, ACTION_DIM)
     unity = UnitySocket()
-    
-    # Check if we want to load a model
-    load_existing = input("Load existing model? (y/n): ").lower() == 'y'
+
+    load_existing = input("Load existing model? (y/n): ").strip().lower() == 'y'
     if load_existing:
         success = maddpg.load_model()
         if success:
-            print("Model loaded. Running in inference mode (no training/noise).")
-    
+            print("Loaded models; running in inference (no training).")
     training_mode = not load_existing
 
     try:
         states, _, _ = unity.receive_state()
-        
+        if states is None:
+            print("Unity did not send initial state. Exiting.")
+            return
+
         for episode in range(NUM_EPISODES):
-            print(f"--- Episode {episode} ---")
-            
-            if states is None: break
-            
+            print(f"=== Episode {episode} ===")
             if training_mode:
                 maddpg.reset_noise()
-            
-            total_reward = 0
+
+            total_reward = 0.0
             step = 0
             episode_over = False
             status_code = 0
-            
-            # Calculate noise scale for this episode (linear decay)
+
+            # linear noise schedule
             if training_mode:
-                noise_scale = NOISE_START - (episode / NOISE_DECAY_EPISODES) * (NOISE_START - NOISE_END)
+                noise_scale = NOISE_START - (episode / float(NOISE_DECAY_EPISODES)) * (NOISE_START - NOISE_END)
                 noise_scale = max(NOISE_END, noise_scale)
             else:
                 noise_scale = 0.0
-            
+
             while step < MAX_STEPS:
-                
-                # Warmup phase: use high correlated noise or pure random?
-                # Since we have OUNoise, we just rely on high noise_scale during warmup.
-                # We can force full exploration during warmup if we want.
-                current_noise_scale = noise_scale
+                current_noise = noise_scale
                 if training_mode and episode < WARMUP_EPISODES:
-                    current_noise_scale = 1.5 # Boost noise during warmup
-                
-                actions = maddpg.select_actions(states, noise_scale=current_noise_scale)
-                
+                    current_noise = 1.5
+
+                actions = maddpg.select_actions(states, noise_scale=current_noise)  # (N,A)
                 unity.send_action(actions)
+
                 next_states, rewards, flags = unity.receive_state()
-                
-                if next_states is None: 
+                if next_states is None:
+                    print("Unity disconnected during episode.")
                     states = None
                     break
-                
+
                 dones = [1 if f != 0 else 0 for f in flags]
                 if all(dones):
                     episode_over = True
-                    unique_flags = set(flags)
-                    if unique_flags == {1}:
+                    unique_flags = set(flags.tolist())
+                    if unique_flags == {1.0}:
                         status_code = 1
-                    elif unique_flags == {2}:
+                    elif unique_flags == {2.0}:
                         status_code = 2
                     else:
-                        status_code = 3  # mixed outcomes
+                        status_code = 3
 
-                # Only train if in training mode
                 if training_mode:
                     maddpg.replay_buffer.add(states, actions, rewards, next_states, dones)
                     maddpg.update()
-                
+
                 states = next_states
-                total_reward += sum(rewards)
+                total_reward += float(sum(rewards))
                 step += 1
-                
-                # Detailed logging every 50 steps or end of episode
+
                 if step % 50 == 0 or episode_over:
-                    print(f"--- Step {step} ---")
-                    for d_i in range(NUM_DRONES):
-                        s_info = format_state(states[d_i])
-                        print(f"  Drone {d_i}: Rew:{rewards[d_i]:.2f}, {s_info}, Act:{actions[d_i]}")
-                
+                    print(f"Step {step}: total_reward so far {total_reward:.2f}")
+                    for d in range(NUM_DRONES):
+                        print(f"  Drone {d} reward {rewards[d]:.2f}, state: {format_state(states[d])}, action: {actions[d]}")
+
                 if episode_over:
                     if status_code == 1:
-                        status_str = "All Targets Reached"
+                        status = "All Targets Reached"
                     elif status_code == 2:
-                        status_str = "All Collided"
+                        status = "All Collided"
                     else:
-                        status_str = "Mixed Outcomes"
-                    print(f"Episode ended. Status: {status_str}")
-                    # Log detailed state of agent 0 at end
-                    log_training(episode, step, total_reward, status_str, format_state(states[0]))
+                        status = "Mixed Outcomes"
+                    print("Episode ended: ", status)
+                    log_training(episode, step, total_reward, status, format_state(states[0]))
+                    # Receive next initial state (Unity sends initial after reset)
                     states, _, _ = unity.receive_state()
                     break
 
             if not episode_over:
-                print("Episode ended. Status: Timeout")
+                print("Episode ended by timeout.")
                 log_training(episode, step, total_reward, "Timeout", format_state(states[0]) if states is not None else None)
                 unity.send_reset()
                 states, _, _ = unity.receive_state()
-            
-            print(f"Total Reward: {total_reward:.2f}")
-            
-            # Save model periodically
+
+            print(f"Episode {episode} total_reward={total_reward:.2f}")
+
             if training_mode and episode % 10 == 0:
                 maddpg.save_model()
                 save_loss_plot(maddpg)
-            
+
     except KeyboardInterrupt:
-        print("Interrupted.")
+        print("Interrupted by user.")
         if training_mode:
-             maddpg.save_model()
+            maddpg.save_model()
     finally:
         unity.close()
-        
-    # Plot losses
+
     if training_mode:
         save_loss_plot(maddpg)
-        print("Saved loss plot to att_maddpg_losses.png")
+        print("Training finished. Loss plot saved.")
 
 if __name__ == "__main__":
     main()
