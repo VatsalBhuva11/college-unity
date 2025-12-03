@@ -3,12 +3,9 @@ using System.Net.Sockets;
 using System.Collections;
 using UnityEngine;
 
-// FlockingDDPG.cs
+// FlockingDDPG.cs (fixed variable naming to avoid C# shadowing errors)
 // Attach to a Unity GameObject. Set 'drones' (array length NUM_DRONES) and 'target' in Inspector.
-// Protocol:
-//   Send to Python each step: for each drone: [19 floats state] + [1 float reward] + [1 float flag]
-//   Receive from Python: NUM_DRONES * ACTION_DIM floats
-//   Reset signal: first float == -99.0f
+// Protocol is unchanged.
 
 public class FlockingDDPG : MonoBehaviour
 {
@@ -18,7 +15,7 @@ public class FlockingDDPG : MonoBehaviour
     private TcpClient client;
     private NetworkStream stream;
 
-    private const int STATE_DIM = 19; // now matches Python STATE_DIM
+    private const int STATE_DIM = 19; // same as Python STATE_DIM
     private const int ACTION_DIM = 2;
     private const int FULL_DIM = STATE_DIM + 2; // state + reward + flag
 
@@ -27,9 +24,13 @@ public class FlockingDDPG : MonoBehaviour
     private float[] prevDistToTarget;
     private bool[] droneDone;
 
-    public float MAX_SPEED = 10f;
-    public float MAX_STEERING_DEG = 3f;
+    // TUNING: Use a yaw-rate (degrees per second) rather than a tiny per-step deg.
+    public float MAX_SPEED = 10f;                 // m/s for throttle
+    public float MAX_TURN_RATE_DEG_PER_SEC = 90f; // degrees per second for steering
     public float RAYCAST_RANGE = 40f;
+
+    // Optional debug: enable for verbose logs
+    public bool debugLogs = false;
 
     void Start()
     {
@@ -79,18 +80,6 @@ public class FlockingDDPG : MonoBehaviour
         }
     }
 
-    // Build the 19-element state for a drone (matching mapping used in Python)
-    // 0: yaw (degrees)
-    // 1: speed (magnitude)
-    // 2: angle to target (signed degrees)
-    // 3: distance to target
-    // 4: angle to nearest neighbor 1
-    // 5: distance to nearest neighbor 1
-    // 6: angle to nearest neighbor 2
-    // 7: distance to nearest neighbor 2
-    // 8-16: 9 ray distances (sensor rays)
-    // 17: alignment with neighbor 1 (dot product of forward vectors)
-    // 18: alignment with neighbor 2
     float[] GetDroneState(GameObject drone)
     {
         Rigidbody rb = drone.GetComponent<Rigidbody>();
@@ -100,7 +89,7 @@ public class FlockingDDPG : MonoBehaviour
         state[0] = drone.transform.eulerAngles.y;
 
         // velocity magnitude
-        state[1] = rb.velocity.magnitude;
+        state[1] = rb != null ? rb.velocity.magnitude : 0f;
 
         Vector3 toTarget = target.position - drone.transform.position;
         state[2] = Vector3.SignedAngle(drone.transform.forward, toTarget, Vector3.up);
@@ -108,7 +97,6 @@ public class FlockingDDPG : MonoBehaviour
 
         // find two nearest neighbors (excluding self)
         float min1 = float.MaxValue, min2 = float.MaxValue;
-        Vector3 nearest1 = Vector3.zero, nearest2 = Vector3.zero;
         GameObject nearestObj1 = null, nearestObj2 = null;
 
         foreach (GameObject other in drones)
@@ -152,7 +140,7 @@ public class FlockingDDPG : MonoBehaviour
             state[6] = 0f; state[7] = 100f;
         }
 
-        // 9 raycasts around (like in test.py)
+        // 9 raycasts around
         for (int i = 0; i < 9; i++)
         {
             Vector3 dir = Quaternion.Euler(0, i * 40f - 180f, 0) * drone.transform.forward;
@@ -167,7 +155,7 @@ public class FlockingDDPG : MonoBehaviour
             }
         }
 
-        // alignment with nearest neighbours: dot product of forward vectors normalized (-1..1)
+        // alignment with nearest neighbours: dot product (-1..1)
         if (nearestObj1 != null)
         {
             Vector3 f1 = drone.transform.forward.normalized;
@@ -189,7 +177,6 @@ public class FlockingDDPG : MonoBehaviour
 
     float CalculateReward(int idx, float[] state, int flag, float[] actions)
     {
-        // Keep reward logic consistent with Python test.py variant
         float curDist = state[3];
         float prev = prevDistToTarget[idx];
         float reward = (prev - curDist) * 30f;
@@ -277,34 +264,46 @@ public class FlockingDDPG : MonoBehaviour
         }
     }
 
+    // FixedUpdate-friendly physics rotation; variable names uniquely named to avoid shadowing
     void ApplyActionToDrone(GameObject drone, float steering_norm, float throttle_norm)
     {
         Rigidbody rb = drone.GetComponent<Rigidbody>();
-        float targetTurn = steering_norm * MAX_STEERING_DEG;
-        float appliedSpeed = throttle_norm * MAX_SPEED;
-
-        // Smooth rotation via coroutine
-        StartCoroutine(RotateDroneOverTime(drone, targetTurn, 0.05f));
-
-        Vector3 desiredVel = drone.transform.forward * appliedSpeed;
-        Vector3 accel = (desiredVel - rb.velocity);
-        float maxAccel = 10f;
-        if (accel.magnitude > maxAccel) accel = accel.normalized * maxAccel;
-        rb.AddForce(accel, ForceMode.Acceleration);
-    }
-
-    System.Collections.IEnumerator RotateDroneOverTime(GameObject drone, float targetAngle, float duration)
-    {
-        float elapsed = 0f;
-        Quaternion start = drone.transform.rotation;
-        Quaternion targetRot = start * Quaternion.Euler(0, targetAngle, 0);
-        while (elapsed < duration)
+        if (rb == null)
         {
-            drone.transform.rotation = Quaternion.Slerp(start, targetRot, elapsed / duration);
-            elapsed += Time.deltaTime;
-            yield return null;
+            // fallback: apply transform changes if no Rigidbody
+            float yawDeltaNoRb = steering_norm * MAX_TURN_RATE_DEG_PER_SEC * Time.fixedDeltaTime;
+            drone.transform.Rotate(0f, yawDeltaNoRb, 0f, Space.World);
+            Vector3 desiredVelNoRb = drone.transform.forward * (throttle_norm * MAX_SPEED);
+            drone.transform.position += desiredVelNoRb * Time.fixedDeltaTime;
+            return;
         }
-        drone.transform.rotation = targetRot;
+
+        // Check common issues (informational)
+        if (rb.constraints != RigidbodyConstraints.None)
+        {
+            if ((rb.constraints & RigidbodyConstraints.FreezeRotationY) != 0)
+            {
+                Debug.LogWarning($"Rigidbody on {drone.name} has FreezeRotationY — rotation will be prevented.");
+            }
+        }
+
+        // rotation using yaw rate -> delta this physics step
+        float yawRateDegPerSec = steering_norm * MAX_TURN_RATE_DEG_PER_SEC;
+        float yawDeltaRb = yawRateDegPerSec * Time.fixedDeltaTime; // degrees for this physics step
+
+        Quaternion deltaRot = Quaternion.Euler(0f, yawDeltaRb, 0f);
+        Quaternion newRot = rb.rotation * deltaRot;
+        rb.MoveRotation(newRot);
+
+        // throttle: target forward speed (based on Rigidbody rotation)
+        Vector3 desiredVelRb = (rb.rotation * Vector3.forward) * (throttle_norm * MAX_SPEED);
+        Vector3 accel = desiredVelRb - rb.velocity;
+
+        // clamp acceleration for stability
+        float maxAccel = 20f;
+        if (accel.magnitude > maxAccel) accel = accel.normalized * maxAccel;
+
+        rb.AddForce(accel, ForceMode.Acceleration);
     }
 
     void ResetDrones()
@@ -326,10 +325,8 @@ public class FlockingDDPG : MonoBehaviour
 
             droneDone[i] = false;
 
-            // reset prev distance
             prevDistToTarget[i] = Vector3.Distance(drones[i].transform.position, target.position);
 
-            // Reset collision detectors if present
             var cd = drones[i].GetComponent<CollisionDetector>();
             if (cd != null) cd.HasCollided = false;
         }
@@ -350,25 +347,6 @@ public class FlockingDDPG : MonoBehaviour
             if (!droneDone[i] && DroneAtTarget(i)) droneDone[i] = true;
             if (!droneDone[i]) allDone = false;
         }
-    }
-
-    bool AnyCollision()
-    {
-        foreach (var d in drones)
-        {
-            var cd = d.GetComponent<CollisionDetector>();
-            if (cd != null && cd.HasCollided) return true;
-        }
-        return false;
-    }
-
-    bool AllAtTarget()
-    {
-        foreach (var d in drones)
-        {
-            if (Vector3.Distance(d.transform.position, target.position) > 2.0f) return false;
-        }
-        return true;
     }
 
     System.Collections.IEnumerator CommunicationLoop()
@@ -417,11 +395,15 @@ public class FlockingDDPG : MonoBehaviour
                 }
                 flags[i] = flag;
 
-                // Extract action for this drone from the actions array (if available)
                 float[] droneAction = new float[ACTION_DIM];
                 Array.Copy(actions, i * ACTION_DIM, droneAction, 0, ACTION_DIM);
 
                 rewards[i] = CalculateReward(i, st, flag, droneAction);
+
+                if (debugLogs)
+                {
+                    Debug.Log($"Drone {i} reward {rewards[i]:F2}, flag {flag}, vel {st[1]:F2}, distT {st[3]:F2}");
+                }
             }
 
             // Send next state + rewards + flags
